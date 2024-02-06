@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
-using Argon2;
-using BCrypt.Net;
-using SCrypt;
+using Konscious.Security.Cryptography;
+using System.Text;
+using System.Security.Cryptography;
+using Scrypt;
 
 
 class PasswordGenerator
@@ -30,13 +30,13 @@ class PasswordGenerator
         
             Console.WriteLine("------------------");
 
-            Console.WriteLine("Enter the desired passord length:");
+            Console.WriteLine("Enter the desired passord length (*recommended: min 17 ):");
             int legnth = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Specify Password strength: (1-3):");
             int strength = int.Parse(Console.ReadLine());
 
-            if(strength =< 1 || strength => 3){
+            if(strength <= 1 || strength <= 3){
                 throw new Exception("Invalid strength, please enter a number between 1 and 3");
             }
             
@@ -67,15 +67,12 @@ class PasswordGenerator
     
             if(get){           
                 try {
-                    Console.WriteLine($"Hashed password: { getHash(password);}"); 
+                    Console.WriteLine($"Hashed password: {getHash(password)}"); 
                 }catch(Exception e){
                     getHash(password);
                     Console.WriteLine(e.Message);
                 }
             }
-
-            Console.WriteLine("Save password to ledgder? (y/n)");
-            Console.ReadLine().ToLower() == ? savePass(0) : exit;
 
        }catch(IOException){
            Console.WriteLine("Invalid input, please try again");
@@ -86,20 +83,21 @@ class PasswordGenerator
 
     }
 
-    public static string GeneratePassword(int length , bool upper , bool nums , bool special , int strength ,bool avoidAmbiguous , boole noDupes , bool noSeq)
+    public static string GeneratePassword(int length , bool upper , bool nums , bool special , int strength ,bool avoidAmbiguous , bool noDupes , bool noSeq)
     {
         string Lowercase = "abcdefghijklmnopqrstuvwxyz";
         string uppercase =  upper ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "";
+        string multiLang =  (strength == 3) ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכלמנסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";
         string numbers = nums ?  "0123456789" : "";
         string specChars = special ? "!@#$%^&*()_+{}|:<>?-=[];',./" : "";
         string emojies = (strength < 3) ? "" : "😀😁😂🤣😃😄😅😆😉😊😋😎😍😘😗😙😚😇😐😑😶😏😣😥😮😯😪😫😴😌😛😜😝😒😓😔😕😲😷😖😞😟😤😢😭😦😧😨😩😬😰😱😳😵😡😠";
-        string symbols = (strength < 2) ? "" :"♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" ;
+        string symbols = (strength <= 2) ? "" :"♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" ;
         string ambiguous =  avoidAmbiguous ? "il1Lo0O" : "";
 
         string allChars = Lowercase + uppercase + numbers + specChars + emojies + symbols;
 
-        foreach(char ambiguous in ambiguous){
-            allChars = allChars.Replace(ambiguous.ToString(), "");
+        foreach(char am in ambiguous){
+            allChars = allChars.Replace(am.ToString(), "");
         }
 
       
@@ -123,8 +121,8 @@ class PasswordGenerator
         
             if (noSeq && password.Length > 0)
             {
-                char lastChar = passord[password.Length - 1];
-                if (IsSequential(lastChar, nextChar) continue;          
+                char lastChar = password[password.Length - 1];
+                if(IsSequential(lastChar, nextChar)) continue;          
             }
 
             password.Append(nextChar);
@@ -138,8 +136,8 @@ class PasswordGenerator
         return Math.Abs(a-b) == 1;
     }   
 
-    public int GetSecureSeed(){
-        using (var rng = new RNGCryptoServiceProvider())
+    public static int GetSecureSeed(){
+        using (var rng =  RandomNumberGenerator.Create())
         {
             byte[] bytes = new byte[4];
             rng.GetBytes(bytes);
@@ -149,41 +147,49 @@ class PasswordGenerator
 
     public static string getHash(string password)
     {
-        Console.WriteLine("Enter a salt: (leave empty to generate a random salt)");
+        Console.WriteLine("Enter a salt n Pepper: (leave empty to generate a random salt)");
         string salt = Console.ReadLine();
         if (string.IsNullOrEmpty(salt))
         {
-            salt = BCryptHelper.GenerateSalt(12);
-        }
-        string hash;
+            
+        }  
 
-        Console.WriteLine("Enter the desired hash algorithm: (1-5):");
+        Console.WriteLine("Enter the desired hash algorithm: (1-2):");
         Console.WriteLine("1. Argon2");
-        Console.WriteLine("2. BCrypt");
-        Console.WriteLine("4. SCrypt");
-        Console.WriteLine("5. SHA256");
+        Console.WriteLine("2. SCrypt");
         int algo = int.Parse(Console.ReadLine());
-        switch (algo)
-        {
+        try{
+            switch (algo)
+            {
+                case 1:
+                    return getArgon2Hash(password, salt);
+                case 2:
+                    return getSCryptHash(password, salt);
+                default:
+                    throw new Exception("Invalid algorithm, please enter a number between 1 and 2");
 
+            }
+        }catch(Exception e){
+            throw new Exception(e.Message);
         }
-
-        return new string hash;
-    
     }
 
-    public byte GenerateSalt()
+    public static string getArgon2Hash(string password, string salt)
     {
-        byte[] salt = new byte();
-        using (var rng = new RNGCryptoServiceProvider())
-        {
-            rng.GetBytes(salt);
-        }
-        return salt;
+        var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password));
+        argon2.Salt = Encoding.UTF8.GetBytes(salt);
+        argon2.DegreeOfParallelism = 14;
+        argon2.MemorySize = 8192;
+        argon2.Iterations = 4;
+        return Convert.ToBase64String(argon2.GetBytes(32));
     }
+
+    public static string getSCryptHash(string password, string salt)
     {
-        
+        byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
+        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+        byte[] hashedPassword = ScryptEncoder.Encode(passwordBytes, saltBytes, 16384, 8, 1, 32);
+        return Convert.ToBase64String(hashedPassword);
     }
-    
 }
  
