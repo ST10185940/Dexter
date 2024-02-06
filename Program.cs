@@ -3,6 +3,7 @@ using Konscious.Security.Cryptography;
 using System.Text;
 using System.Security.Cryptography;
 using Scrypt;
+using System.Xml.Serialization;
 
 
 class PasswordGenerator
@@ -11,10 +12,6 @@ class PasswordGenerator
     public static void Main(){
 
        try{
-            Console.SetWindowSize(80, 30);
-            Console.SetBufferSize(80, 30);
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.ForegroundColor = ConsoleColor.Green;
             Console.Title = "Password Generator v1.0";
             string name = @"
                                  /$$$$$$$                       /$$                        
@@ -145,15 +142,20 @@ class PasswordGenerator
         }
     }
 
+    public static byte[] GenerateSalt()
+    {
+        byte[] salt = new byte[32];
+        byte[] pepper = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+          rng.GetBytes(salt);
+        }
+        return salt;
+    }
+
     public static string getHash(string password)
     {
-        Console.WriteLine("Enter a salt n Pepper: (leave empty to generate a random salt)");
-        string salt = Console.ReadLine();
-        if (string.IsNullOrEmpty(salt))
-        {
-            
-        }  
-
+        password += getPepper();
         Console.WriteLine("Enter the desired hash algorithm: (1-2):");
         Console.WriteLine("1. Argon2");
         Console.WriteLine("2. SCrypt");
@@ -162,34 +164,45 @@ class PasswordGenerator
             switch (algo)
             {
                 case 1:
-                    return getArgon2Hash(password, salt);
+                    return getArgon2Hash(password, GenerateSalt());
                 case 2:
-                    return getSCryptHash(password, salt);
+                    //return getSCryptHash(password, GenerateSalt());
                 default:
                     throw new Exception("Invalid algorithm, please enter a number between 1 and 2");
-
             }
         }catch(Exception e){
             throw new Exception(e.Message);
         }
     }
 
-    public static string getArgon2Hash(string password, string salt)
+    public static string getArgon2Hash(string password, byte[] salt)
     {
-        var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password));
-        argon2.Salt = Encoding.UTF8.GetBytes(salt);
-        argon2.DegreeOfParallelism = 14;
-        argon2.MemorySize = 8192;
-        argon2.Iterations = 4;
+        var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
+        {
+            Salt = salt,
+            DegreeOfParallelism = 14,
+            MemorySize = 8192,
+            Iterations = 4
+        };
         return Convert.ToBase64String(argon2.GetBytes(32));
     }
 
-    public static string getSCryptHash(string password, string salt)
+    /*public static string getSCryptHash(string password, byte[] salt)
     {
-        byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
+        byte[] saltBytes = salt;
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-        byte[] hashedPassword = ScryptEncoder.Encode(passwordBytes, saltBytes, 16384, 8, 1, 32);
+        byte[] hashedPassword = ScryptEncoder.Encode(passwordBytes,saltBytes, 16384, 8, 1, 32);
         return Convert.ToBase64String(hashedPassword);
+    }*/
+
+    public static string getPepper()
+    {
+        byte[] pepper = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(pepper);
+        }
+        return Convert.ToBase64String(pepper);
     }
 }
  
