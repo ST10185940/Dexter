@@ -32,10 +32,6 @@ class PasswordGenerator
 
             Console.WriteLine("Specify Password strength: (1-3):");
             int strength = int.Parse(Console.ReadLine());
-
-            /*if(!strength <= 1 || !strength <= 3){
-                throw new Exception("Invalid strength, please enter a number between 1 and 3");
-            }*/
             
             Console.WriteLine("Include uppercase letters? (y/n)");
             bool upper = Console.ReadLine().ToLower() == "y" ? true : false;
