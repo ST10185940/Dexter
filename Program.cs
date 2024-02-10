@@ -14,18 +14,18 @@ class PasswordGenerator
        try{
             Console.Title = "Password Generator v1.0";
             string name = @"
-                                 /$$$$$$$                       /$$                        
-                                | $$__  $$                     | $$                        
-                                | $$  \ $$  /$$$$$$  /$$   /$$/$$$$$$    /$$$$$$   /$$$$$$\
-                                | $$  | $$ /$$__  $$|  $$ /$$/_  $$_/   /$$__  $$ /$$__  $$
-                                | $$  | $$| $$$$$$$$ \  $$$$/  | $$    | $$$$$$$$| $$  \__/
-                                | $$  | $$| $$_____/  >$$  $$  | $$ /$$| $$_____/| $$      
-                                | $$$$$$$/|  $$$$$$$ /$$/\  $$ |  $$$$/|  $$$$$$$| $$      
-                                |_______/  \_______/|__/  \__/  \___/   \_______/|__/       v1.0";
+             /$$$$$$$                       /$$                        
+            | $$__  $$                     | $$                        
+            | $$  \ $$  /$$$$$$  /$$   /$$/$$$$$$    /$$$$$$   /$$$$$$\
+            | $$  | $$ /$$__  $$|  $$ /$$/_  $$_/   /$$__  $$ /$$__  $$
+            | $$  | $$| $$$$$$$$ \  $$$$/  | $$    | $$$$$$$$| $$  \__/
+            | $$  | $$| $$_____/  >$$  $$  | $$ /$$| $$_____/| $$      
+            | $$$$$$$/|  $$$$$$$ /$$/\  $$ |  $$$$/|  $$$$$$$| $$      
+            |_______/  \_______/|__/  \__/  \___/   \_______/|__/       v1.0";
         
             Console.WriteLine(name);
+            Console.WriteLine("");
         
-            Console.WriteLine("------------------");
 
             Console.WriteLine("Enter the desired passord length (*recommended: min 17 ):");
             int legnth = int.Parse(Console.ReadLine());
@@ -33,9 +33,9 @@ class PasswordGenerator
             Console.WriteLine("Specify Password strength: (1-3):");
             int strength = int.Parse(Console.ReadLine());
 
-            if(strength <= 1 || strength <= 3){
+            /*if(!strength <= 1 || !strength <= 3){
                 throw new Exception("Invalid strength, please enter a number between 1 and 3");
-            }
+            }*/
             
             Console.WriteLine("Include uppercase letters? (y/n)");
             bool upper = Console.ReadLine().ToLower() == "y" ? true : false;
@@ -87,11 +87,10 @@ class PasswordGenerator
         string multiLang =  (strength == 3) ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכלמנסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";
         string numbers = nums ?  "0123456789" : "";
         string specChars = special ? "!@#$%^&*()_+{}|:<>?-=[];',./" : "";
-        string emojies = (strength < 3) ? "" : "😀😁😂🤣😃😄😅😆😉😊😋😎😍😘😗😙😚😇😐😑😶😏😣😥😮😯😪😫😴😌😛😜😝😒😓😔😕😲😷😖😞😟😤😢😭😦😧😨😩😬😰😱😳😵😡😠";
-        string symbols = (strength <= 2) ? "" :"♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" ;
+        string symbols = (strength >= 2) "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
         string ambiguous =  avoidAmbiguous ? "il1Lo0O" : "";
 
-        string allChars = Lowercase + uppercase + numbers + specChars + emojies + symbols;
+        string allChars = Lowercase + uppercase + numbers + specChars + symbols + multiLang;
 
         foreach(char am in ambiguous){
             allChars = allChars.Replace(am.ToString(), "");
@@ -110,7 +109,7 @@ class PasswordGenerator
         Random random = new Random(GetSecureSeed());
 
 
-        while (password.Length < length)
+        while (password.Length <= length)
         {
             char nextChar = allChars[random.Next(allChars.Length)];
 
@@ -187,13 +186,13 @@ class PasswordGenerator
         return Convert.ToBase64String(argon2.GetBytes(32));
     }
 
-    /*public static string getSCryptHash(string password, byte[] salt)
+    public static string getSCryptHash(string password, byte[] salt)
     {
         byte[] saltBytes = salt;
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         byte[] hashedPassword = ScryptEncoder.Encode(passwordBytes,saltBytes, 16384, 8, 1, 32);
         return Convert.ToBase64String(hashedPassword);
-    }*/
+    }
 
     public static string getPepper()
     {
