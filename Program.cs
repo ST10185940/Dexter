@@ -9,12 +9,10 @@ class PasswordGenerator
 
     #pragma warning disable CS8602 // Dereference of a possibly null reference.
     #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'int int.Parse(string s)'.
-    
 
     public static void Main(){
         run();
     }
-
 
     public static string GeneratePassword(int length , bool upper , bool nums , bool special , int strength ,bool avoidAmbiguous , bool noDupes , bool noSeq)
     {
@@ -31,7 +29,6 @@ class PasswordGenerator
         foreach(char am in ambiguous){
             allChars = allChars.Replace(am.ToString(), "");
         }
-
 
         StringBuilder password = new StringBuilder();
 
@@ -163,7 +160,7 @@ class PasswordGenerator
             |_______/  \_______/|__/  \__/  \___ /  \_______/|__/       v1.1";
 
             
-            Console.WriteLine(name);
+            Type(name);
             Console.WriteLine(" ____  _  _  ____  __  __  __  __");
             Console.WriteLine();
 
@@ -174,6 +171,9 @@ class PasswordGenerator
             Type("Specify Password strength: (1-3):");
             int strength = int.Parse(Console.ReadLine());
             
+            Console.Clear();
+            Console.WriteLine(name);
+
             Type("Include uppercase letters? (y/n)");
 
             bool upper = Console.ReadLine().ToLower() == "y" ? true : false;
@@ -184,6 +184,10 @@ class PasswordGenerator
             Type("Include special characters? (y/n)");
             bool special = Console.ReadLine().ToLower() == "y" ? true : false;
 
+
+            Console.Clear();
+            Console.WriteLine(name);
+
             Type("Avoid visually ambiguous characters? (y/n)");
             bool avoidAmbiguous = Console.ReadLine().ToLower() == "y" ? true : false;
 
@@ -193,6 +197,9 @@ class PasswordGenerator
             Type("No sequential characters? (y/n)");
             bool noSeq = string.Equals(Console.ReadLine().ToLower(),"y")? true : false;
                             
+            Console.Clear();
+            Console.WriteLine(name);
+            
             string password = GeneratePassword(legnth, upper, nums , special , strength , avoidAmbiguous , noDupes , noSeq);
            
             Console.Clear();
