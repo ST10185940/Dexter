@@ -4,13 +4,14 @@ using System.Text;
 using System.Security.Cryptography;
 using Scrypt;
 
-class PasswordGenerator
+class Dexter
 {
 
     #pragma warning disable CS8602 // Dereference of a possibly null reference.
     #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'int int.Parse(string s)'.
 
-    public static void Main(){
+    public static void Main(){        
+        Console.OutputEncoding = Encoding.UTF8;
         run();
     }
 
@@ -19,7 +20,7 @@ class PasswordGenerator
         string Lowercase = "abcdefghijklmnopqrstuvwxyz";
         string uppercase =  upper ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "";
         string multiLang =  strength == 3 ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכלמנסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";
-        string numbers = nums ?  "0123456789" : "";
+        string numbers = nums ?  "0123456789๑ ๒ ๓ ๔ ๕ ๖ ๗ ๘ ๙ ๑๐一 二 三 四 五 六 七 八 九 十" : "";   //english , thai and japanese numbers
         string specChars = special ? "!@#$%^&*()_+{}|:<>?-=[];',./" : "";
         string symbols = strength <= 2 ?  "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
         string ambiguous =  avoidAmbiguous ? "il1Lo0O" : "";
@@ -92,7 +93,7 @@ class PasswordGenerator
                 case 2:
                     return getSCryptHash(password, GenerateSalt());
                 default:
-                    throw new Exception("Invalid algorithm, please enter a number between 1 and 2");
+                    throw new Exception("Invalid input, please enter a number between 1 and 2");
             }
         }catch(Exception e){
             throw new Exception(e.Message);
@@ -148,7 +149,7 @@ class PasswordGenerator
     {
          try{
            // Console.SetWindowSize(500, 400);
-            Console.Title = "Password Generator v1.0";
+            Console.Title = "Password Generator v1.1";
             string name = @"
              /$$$$$$$                       /$$                        
             | $$__  $$                     | $$                        
@@ -160,9 +161,9 @@ class PasswordGenerator
             |_______/  \_______/|__/  \__/  \___ /  \_______/|__/       v1.1";
 
             
-            Type(name);
+            Console.WriteLine(name);
             Console.WriteLine(" ____  _  _  ____  __  __  __  __");
-            Console.WriteLine();
+            Console.WriteLine(" ");
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Type("Enter the desired passord length (*recommended: min 17 ):");
@@ -173,12 +174,13 @@ class PasswordGenerator
             
             Console.Clear();
             Console.WriteLine(name);
+            Console.WriteLine(" ");
 
             Type("Include uppercase letters? (y/n)");
 
             bool upper = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Type("Inculde numbers? (y/n)");
+            Type("Include numbers? (y/n)");
             bool nums = Console.ReadLine().ToLower() == "y" ? true : false;
 
             Type("Include special characters? (y/n)");
@@ -187,6 +189,7 @@ class PasswordGenerator
 
             Console.Clear();
             Console.WriteLine(name);
+            Console.WriteLine(" ");
 
             Type("Avoid visually ambiguous characters? (y/n)");
             bool avoidAmbiguous = Console.ReadLine().ToLower() == "y" ? true : false;
@@ -199,13 +202,17 @@ class PasswordGenerator
                             
             Console.Clear();
             Console.WriteLine(name);
+            Console.WriteLine();
             
             string password = GeneratePassword(legnth, upper, nums , special , strength , avoidAmbiguous , noDupes , noSeq);
            
             Console.Clear();
             Console.WriteLine(name);
+            Console.WriteLine();
 
-            Type($"Generated password: {password}"); 
+            Type($"Your Super Cooked Secure Password: {password}"); 
+            Console.Write(password);
+            Console.WriteLine();
             Type("Get password hash? (y/n)");
             bool get = Console.ReadLine().ToLower() == "y" ? true : false;
     
