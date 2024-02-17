@@ -3,11 +3,13 @@ using Konscious.Security.Cryptography;
 using System.Text;
 using System.Security.Cryptography;
 using Scrypt;
-using System.Xml.Serialization;
-
 
 class PasswordGenerator
 {
+
+    #pragma warning disable CS8602 // Dereference of a possibly null reference.
+    #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'int int.Parse(string s)'.
+    
 
     public static void Main(){
         run();
@@ -18,10 +20,10 @@ class PasswordGenerator
     {
         string Lowercase = "abcdefghijklmnopqrstuvwxyz";
         string uppercase =  upper ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "";
-        string multiLang =  (strength == 3) ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכלמנסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";
+        string multiLang =  strength == 3 ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכלמנסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";
         string numbers = nums ?  "0123456789" : "";
         string specChars = special ? "!@#$%^&*()_+{}|:<>?-=[];',./" : "";
-        string symbols = (strength <= 2) "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
+        string symbols = strength <= 2 ?  "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
         string ambiguous =  avoidAmbiguous ? "il1Lo0O" : "";
 
         string allChars = Lowercase + uppercase + numbers + specChars + symbols + multiLang;
@@ -91,7 +93,7 @@ class PasswordGenerator
                 case 1:
                     return getArgon2Hash(password, GenerateSalt());
                 case 2:
-                    //return getSCryptHash(password, GenerateSalt());
+                    return getSCryptHash(password, GenerateSalt());
                 default:
                     throw new Exception("Invalid algorithm, please enter a number between 1 and 2");
             }
@@ -112,12 +114,15 @@ class PasswordGenerator
         return Convert.ToBase64String(argon2.GetBytes(64));
     }
 
-     public static string getSCryptHash(string password, byte[] salt)
+    public static string getSCryptHash(string password, byte[] saltnPepper)
     {
-        byte[] saltBytes = salt;
-        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-        byte[] hashedPassword = ScryptEncoder.Encode(passwordBytes,saltBytes, 16384, 8, 1, 32);
-        return Convert.ToBase64String(hashedPassword);
+        string saltString  = Convert.ToBase64String(saltnPepper);
+        string saltedPass =  saltString + password;
+      
+        ScryptEncoder scryptEncoder = new ScryptEncoder(); // Create an instance of ScryptEncoder
+        string hashedPassword =  scryptEncoder.Encode(saltedPass);// Call the Encode method on the instance
+        
+        return hashedPassword.Replace("-","");
     }
 
 
@@ -131,58 +136,75 @@ class PasswordGenerator
         return Convert.ToBase64String(pepper);
     }
 
+    public static void Type(string text)
+    {
+        foreach (char c in text)
+        {
+            Console.Write(c);
+            Thread.Sleep(25);
+        }
+        Console.WriteLine();
+    }
+
+
     public static void run()
     {
          try{
+           // Console.SetWindowSize(500, 400);
             Console.Title = "Password Generator v1.0";
             string name = @"
              /$$$$$$$                       /$$                        
             | $$__  $$                     | $$                        
             | $$  \ $$  /$$$$$$  /$$   /$$/$$$$$$    /$$$$$$   /$$$$$$\
-            | $$  | $$ /$$__  $$|  $$ /$$/_  $$_/   /$$__  $$ /$$__  $$
-            | $$  | $$| $$$$$$$$ \  $$$$/  | $$    | $$$$$$$$| $$  \__/
+            | $$  | $$ /$$__  $$ | $$ /$$/_  $$_/   /$$__  $$ /$$__  $$
+            | $$  | $$| $$$$$$$$  \ $$$$/  | $$    | $$$$$$$$| $$  \__/
             | $$  | $$| $$_____/  >$$  $$  | $$ /$$| $$_____/| $$      
             | $$$$$$$/|  $$$$$$$ /$$/\  $$ |  $$$$/|  $$$$$$$| $$      
-            |_______/  \_______/|__/  \__/  \___/   \_______/|__/       v1.0";
-        
+            |_______/  \_______/|__/  \__/  \___ /  \_______/|__/       v1.1";
+
+            
             Console.WriteLine(name);
-            Console.WriteLine("");
-        
+            Console.WriteLine(" ____  _  _  ____  __  __  __  __");
+            Console.WriteLine();
 
-            Console.WriteLine("Enter the desired passord length (*recommended: min 17 ):");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Type("Enter the desired passord length (*recommended: min 17 ):");
             int legnth = int.Parse(Console.ReadLine());
-
-            Console.WriteLine("Specify Password strength: (1-3):");
+            
+            Type("Specify Password strength: (1-3):");
             int strength = int.Parse(Console.ReadLine());
             
-            Console.WriteLine("Include uppercase letters? (y/n)");
+            Type("Include uppercase letters? (y/n)");
+
             bool upper = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Console.WriteLine("Inculde numbers? (y/n)");
+            Type("Inculde numbers? (y/n)");
             bool nums = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Console.WriteLine("Include special characters? (y/n)");
+            Type("Include special characters? (y/n)");
             bool special = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Console.WriteLine("Avoid visually ambiguous characters? (y/n)");
+            Type("Avoid visually ambiguous characters? (y/n)");
             bool avoidAmbiguous = Console.ReadLine().ToLower() == "y" ? true : false;
 
             Console.WriteLine("No duplicate characters? (y/n)");
             bool noDupes = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Console.WriteLine("No sequential characters? (y/n)");
-            bool noSeq = Console.ReadLine().ToLower() == "y" ? true : false;
+            Type("No sequential characters? (y/n)");
+            bool noSeq = string.Equals(Console.ReadLine().ToLower(),"y")? true : false;
                             
             string password = GeneratePassword(legnth, upper, nums , special , strength , avoidAmbiguous , noDupes , noSeq);
+           
+            Console.Clear();
+            Console.WriteLine(name);
 
-            Console.WriteLine($"Generated password: {password}"); 
-
-            Console.WriteLine("Get password hash? (y/n)");
+            Type($"Generated password: {password}"); 
+            Type("Get password hash? (y/n)");
             bool get = Console.ReadLine().ToLower() == "y" ? true : false;
     
             if(get){           
                 try {
-                    Console.WriteLine($"Hashed password: {getHash(password)}"); 
+                    Type($"Hashed password: {getHash(password)}"); 
                 }catch(Exception e){
                     getHash(password);
                     Console.WriteLine(e.Message);
