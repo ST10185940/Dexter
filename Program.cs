@@ -139,7 +139,7 @@ class Dexter
         foreach (char c in text)
         {
             Console.Write(c);
-            Thread.Sleep(25);
+            Thread.Sleep(1);
         }
         Console.WriteLine();
     }
@@ -177,7 +177,6 @@ class Dexter
             Console.WriteLine(" ");
 
             Type("Include uppercase letters? (y/n)");
-
             bool upper = Console.ReadLine().ToLower() == "y" ? true : false;
 
             Type("Include numbers? (y/n)");
@@ -186,7 +185,6 @@ class Dexter
             Type("Include special characters? (y/n)");
             bool special = Console.ReadLine().ToLower() == "y" ? true : false;
 
-
             Console.Clear();
             Console.WriteLine(name);
             Console.WriteLine(" ");
@@ -194,7 +192,7 @@ class Dexter
             Type("Avoid visually ambiguous characters? (y/n)");
             bool avoidAmbiguous = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Console.WriteLine("No duplicate characters? (y/n)");
+            Type("No duplicate characters? (y/n)");
             bool noDupes = Console.ReadLine().ToLower() == "y" ? true : false;
 
             Type("No sequential characters? (y/n)");
@@ -207,18 +205,23 @@ class Dexter
             string password = GeneratePassword(legnth, upper, nums , special , strength , avoidAmbiguous , noDupes , noSeq);
            
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(name);
             Console.WriteLine();
 
-            Type($"Your Super Cooked Secure Password: {password}"); 
-            Console.Write(password);
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Type($"Super Cooked Secure Password: {password}"); 
+            
             Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Type("Get password hash? (y/n)");
             bool get = Console.ReadLine().ToLower() == "y" ? true : false;
-    
+            
             if(get){           
                 try {
-                    Type($"Hashed password: {getHash(password)}"); 
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                     Type($"Hashed password: {getHash(password)}");
+                     Menu(); 
                 }catch(Exception e){
                     getHash(password);
                     Console.WriteLine(e.Message);
@@ -232,6 +235,29 @@ class Dexter
            Console.WriteLine(e.Message);
        }
 
+    }
+
+    private static void Menu(){
+       // Console.WriteLine("0. Save Password");
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("1. Generate Another Password");
+        //Console.WriteLine("2. View your passwords *Soon");
+        Console.WriteLine("2. Exit");
+        int choice = int.Parse(Console.ReadLine());
+
+        switch(choice){
+            case 1: 
+                Console.Clear();
+                run();
+                break;
+            case 2: 
+                Environment.Exit(0);
+                break;
+            default: 
+                Type("Invalid input, please enter a number between 1 and 2");
+                Menu();
+                break;
+        }
     }
 }
  
