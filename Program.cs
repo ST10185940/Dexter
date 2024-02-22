@@ -9,11 +9,11 @@ class Dexter
 
     #pragma warning disable CS8602 // Dereference of a possibly null reference.
     #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'int int.Parse(string s)'.
-
+    #pragma warning disable CA1416
     public static void Main(){        
         Console.OutputEncoding = Encoding.UTF8;
         run();
-    }
+    }   
 
     public static string GeneratePassword(int length , bool upper , bool nums , bool special , int strength ,bool avoidAmbiguous , bool noDupes , bool noSeq)
     {
@@ -149,7 +149,8 @@ class Dexter
     {
          try{
            // Console.SetWindowSize(500, 400);
-            Console.Title = "Password Generator v1.1";
+            Console.Title = "Dexter v1.1";
+            Console.SetWindowSize(85, 30);
             string name = @"
              /$$$$$$$                       /$$                        
             | $$__  $$                     | $$                        
@@ -162,41 +163,42 @@ class Dexter
 
             
             Console.WriteLine(name);
+            Console.WriteLine(" ");
             Console.WriteLine(" ____  _  _  ____  __  __  __  __");
             Console.WriteLine(" ");
 
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Type("Enter the desired passord length (*recommended: min 17 ):");
+            Type("Set password length: [min recommended: 17]");
             int legnth = int.Parse(Console.ReadLine());
             
-            Type("Specify Password strength: (1-3):");
+            Type("Specify Password strength: [1-3]");
             int strength = int.Parse(Console.ReadLine());
             
             Console.Clear();
             Console.WriteLine(name);
             Console.WriteLine(" ");
 
-            Type("Include uppercase letters? (y/n)");
+            Type("Include uppercase letters? [y/n]");
             bool upper = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Type("Include numbers? (y/n)");
+            Type("Include numbers? [y/n]");
             bool nums = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Type("Include special characters? (y/n)");
+            Type("Include special characters? [y/n]");
             bool special = Console.ReadLine().ToLower() == "y" ? true : false;
 
             Console.Clear();
             Console.WriteLine(name);
             Console.WriteLine(" ");
 
-            Type("Avoid visually ambiguous characters? (y/n)");
+            Type("Exclude visually ambiguous characters? [y/n]");
             bool avoidAmbiguous = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Type("No duplicate characters? (y/n)");
+            Type("Void duplicate characters? [y/n]");
             bool noDupes = Console.ReadLine().ToLower() == "y" ? true : false;
 
-            Type("No sequential characters? (y/n)");
-            bool noSeq = string.Equals(Console.ReadLine().ToLower(),"y")? true : false;
+            Type("Void sequential characters? [y/n]");
+            bool noSeq = string.Equals(Console.ReadLine().ToLower(),"y") ? true : false;
                             
             Console.Clear();
             Console.WriteLine(name);
@@ -210,11 +212,11 @@ class Dexter
             Console.WriteLine();
 
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Type($"Super Cooked Secure Password: {password}"); 
+            Type($"Your Super Cooked Secure Password: {password}"); 
             
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Type("Get password hash? (y/n)");
+            Type("Get password hash? [y/n]");
             bool get = Console.ReadLine().ToLower() == "y" ? true : false;
             
             if(get){           
@@ -237,11 +239,9 @@ class Dexter
 
     }
 
-    private static void Menu(){
-       // Console.WriteLine("0. Save Password");
+    private static void Menu(){      
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("1. Generate Another Password");
-        //Console.WriteLine("2. View your passwords *Soon");
+        Console.WriteLine("1. Generate Another Password");   
         Console.WriteLine("2. Exit");
         int choice = int.Parse(Console.ReadLine());
 
