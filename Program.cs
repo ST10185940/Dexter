@@ -1,8 +1,10 @@
-﻿using System;
-using Konscious.Security.Cryptography;
+﻿using Konscious.Security.Cryptography;
 using System.Text;
 using System.Security.Cryptography;
 using Scrypt;
+using PasswordGenerator;
+using Spectre.Console;
+
 
 class Dexter
 {
@@ -10,9 +12,13 @@ class Dexter
     #pragma warning disable CS8602 // Dereference of a possibly null reference.
     #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'int int.Parse(string s)'.
     #pragma warning disable CA1416
+
+
     public static void Main(){        
         Console.OutputEncoding = Encoding.UTF8;
-        run();
+        // TestMenue();
+        // run();
+        Entry();
     }   
 
     public static string GeneratePassword(int length , bool upper , bool nums , bool special , int strength ,bool avoidAmbiguous , bool noDupes , bool noSeq)
@@ -81,23 +87,24 @@ class Dexter
     public static string getHash(string password)
     {
         password += getPepper();
-        Console.WriteLine("Enter the desired hash algorithm: (1-2):");
-        Console.WriteLine("1. Argon2");
-        Console.WriteLine("2. SCrypt");
-        int algo = int.Parse(Console.ReadLine());
-        try{
+
+        var algo = AnsiConsole.Prompt(
+             new SelectionPrompt<string>()
+            .Title("Select the desired hash algorithm")
+            .AddChoices( new [] {
+                  "Argon2id",
+                  "SCrypt"
+            }));
+        
             switch (algo)
             {
-                case 1:
+                case "Argon2id":
                     return getArgon2Hash(password, GenerateSalt());
-                case 2:
+                case "SCrypt":
                     return getSCryptHash(password, GenerateSalt());
                 default:
                     throw new Exception("Invalid input, please enter a number between 1 and 2");
             }
-        }catch(Exception e){
-            throw new Exception(e.Message);
-        }
     }
 
     public static string getArgon2Hash(string password, byte[] salt)
@@ -123,7 +130,6 @@ class Dexter
         return hashedPassword.Replace("-","");
     }
 
-
     public static string getPepper()
     {
         byte[] pepper = new byte[32];
@@ -144,11 +150,10 @@ class Dexter
         Console.WriteLine();
     }
 
-
-    public static void run()
+    public static async void run()
     {
          try{
-           // Console.SetWindowSize(500, 400);
+
             Console.Title = "Dexter v1.1";
             Console.SetWindowSize(85, 30);
             string name = @"
@@ -179,7 +184,7 @@ class Dexter
             Console.WriteLine(" ");
 
             Type("Include uppercase letters? [y/n]");
-            bool upper = Console.ReadLine().ToLower() == "y" ? true : false;
+            bool upper = Console.ReadLine().ToLower() == " y" ? true : false;
 
             Type("Include numbers? [y/n]");
             bool nums = Console.ReadLine().ToLower() == "y" ? true : false;
@@ -209,55 +214,125 @@ class Dexter
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(name);
-            Console.WriteLine();
+            Console.WriteLine(" ");
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Type($"Your Super Cooked Secure Password: {password}"); 
-            
-            Console.WriteLine();
+
+            await SubMenu(password);
+
+                    
+            /*Console.WriteLine(" ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Type("Get password hash? [y/n]");
+            Type("View password hash? [y/n]");
             bool get = Console.ReadLine().ToLower() == "y" ? true : false;
             
             if(get){           
                 try {
                     Console.ForegroundColor = ConsoleColor.Cyan;
                      Type($"Hashed password: {getHash(password)}");
-                     Menu(); 
+                     Menu(getHash(password)); 
                 }catch(Exception e){
                     getHash(password);
                     Console.WriteLine(e.Message);
                 }
-            }
-
+            }*/
        }catch(IOException){
            Console.WriteLine("Invalid input, please try again");
            Main();
        }catch(Exception e){
            Console.WriteLine(e.Message);
        }
+    }
+    
 
+    public static void Entry(){
+
+         while(true){
+            var select = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .Title("What Can Dexter Do For You")
+            .AddChoices(new[] {
+                "Secure Password Generation",
+                "Nothing"
+          })); 
+
+          switch(select){
+              case "Secure Password Generation": run();
+                      break;
+              case "Nothing":
+                    Type("Until next time!");
+                    Environment.Exit(10);
+                    break;
+            default: 
+                    Type("Be serious here, Okay!");
+                    break;
+          }
+        }   
     }
 
-    private static void Menu(){      
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("1. Generate Another Password");   
-        Console.WriteLine("2. Exit");
-        int choice = int.Parse(Console.ReadLine());
+    public static async Task SubMenu(string password){       //1. make 3rd option to see hash , 2. change to selection menue
+        while(true){
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("1. Generate Another Password"); 
+                Console.WriteLine("2. Save Password");
+                Console.WriteLine("3. Main Menu");
+                Console.WriteLine("4. Exit ");
 
-        switch(choice){
-            case 1: 
-                Console.Clear();
-                run();
-                break;
-            case 2: 
-                Environment.Exit(0);
-                break;
-            default: 
-                Type("Invalid input, please enter a number between 1 and 2");
-                Menu();
-                break;
+                int choice = int.Parse(Console.ReadLine());
+
+                switch(choice){
+                    case 1: 
+                        Console.Clear();
+                        run();
+                        break;
+                    case 2: 
+                        Type(await SaveAync(getHash(password))); 
+                        break;
+                    case 3: 
+                        Console.Clear();
+                        Entry();
+                        break;
+                    case 4: 
+                        Environment.Exit(0);
+                        break;
+                    default: 
+                        Type("Invalid input, please enter a number between 1 and 2");
+                        break;
+                }
         }
     }
-}
+
+    public static async Task<string> SaveAync(string hash){
+
+        Type("Give the password a name");
+        string? name = Console.ReadLine();
+        Console.WriteLine(" ");
+            
+        var path = "yourPasswords.csv";
+
+        using var writer = new StreamWriter(path);
+        await writer.WriteLineAsync("Password_Name , Hash");
+        await writer.WriteLineAsync(" ");
+        await writer.WriteLineAsync($"{name} , {hash}");
+
+        return "Password Saved locally to yourPasswords.csv ";
+    }
+
+    // public static void TestMenue()  //new features for Dextera and improvement to navigation for Dexter v2 
+    // {      
+
+    //         var option = AnsiConsole.Prompt(
+    //             new SelectionPrompt<string>()
+    //             .Title("What can Dexter do for you?")
+    //             .AddChoices(new[] {
+    //                 "Secure Password Generation",
+    //                 "File Encyption/Decryption",
+    //                 "General File Health Checks(Zips)",
+    //                 "Data Compression/Decompression",
+    //                 "System Information",
+    //                 "Nothing"
+    //          }));    
+    // }
+ }
  

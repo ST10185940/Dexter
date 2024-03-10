@@ -1,13 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "Y/86Xw+kAbgdnH/SeOxi0Q5COZtroDRXdBIHhmvOol/4fcrVwDUYl4k4jnACSV1XvIgSRE4ktcFm8eyr6Oz0Gw==",
+  "dgSpecHash": "20ynuSCDcVbdPDzB/XmYxsrjW3MpnOKEUiN2JgJuwrfpfNNidUulTWM8m7mmcua2siRYYA20x2gyr3h/WLLoRg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\admin\\PasswordGenerator\\PasswordGenerator.csproj",
+  "projectFilePath": "C:\\Users\\admin\\Desktop\\softworks\\dexter\\PasswordGenerator.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\admin\\.nuget\\packages\\konscious.security.cryptography.argon2\\1.3.0\\konscious.security.cryptography.argon2.1.3.0.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\konscious.security.cryptography.blake2\\1.1.0\\konscious.security.cryptography.blake2.1.1.0.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\scrypt.net\\1.3.0\\scrypt.net.1.3.0.nupkg.sha512",
-    "C:\\Users\\admin\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512"
+    "C:\\Users\\admin\\.nuget\\packages\\spectre.console\\0.48.0\\spectre.console.0.48.0.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\spectre.console.cli\\0.48.0\\spectre.console.cli.0.48.0.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512"
   ],
   "logs": []
 }
