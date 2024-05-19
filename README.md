@@ -10,7 +10,7 @@
 |_______/  \_______/|__/  \__/  \___/   \_______/|__/       v1.1 
 ```
 
-# Simple Password Generator
+# A Simple Password Generator
 
 A console application written in C# for generating strong and secure passwords quickly and easily.
 
