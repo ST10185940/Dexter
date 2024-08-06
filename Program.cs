@@ -1,46 +1,57 @@
-﻿using Konscious.Security.Cryptography;
+using Konscious.Security.Cryptography;
 using System.Text;
 using System.Security.Cryptography;
 using Scrypt;
 using PasswordGenerator;
 using Spectre.Console;
+using System.Runtime.CompilerServices;
+using System.Collections;
+using System.Security.Cryptography.X509Certificates;
 
 
 class Dexter
 {
-
     #pragma warning disable CS8602 // Dereference of a possibly null reference.
     #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'int int.Parse(string s)'.
     #pragma warning disable CA1416
 
-
+    private static void remix(){
+        
+    }
+    
     public static void Main(){        
         Console.OutputEncoding = Encoding.UTF8;
-        // TestMenue();
-        // run();
-        Entry();
+        TestMenue();
+        //run();
+        //Entry();
     }   
 
-    public static string GeneratePassword(int length , bool upper , bool nums , bool special , int strength ,bool avoidAmbiguous , bool noDupes , bool noSeq)
+    public static string GeneratePassword(int length , int strength, List<string> options )
     {
         string Lowercase = "abcdefghijklmnopqrstuvwxyz";
-        string uppercase =  upper ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "";
-        string multiLang =  strength == 3 ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכלמנסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";
-        string numbers = nums ?  "0123456789๑ ๒ ๓ ๔ ๕ ๖ ๗ ๘ ๙ ๑๐一 二 三 四 五 六 七 八 九 十" : "";   //english , thai and japanese numbers
-        string specChars = special ? "!@#$%^&*()_+{}|:<>?-=[];',./" : "";
-        string symbols = strength <= 2 ?  "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
-        string ambiguous =  avoidAmbiguous ? "il1Lo0O" : "";
+        string symbols = strength >= 2 ?  "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
+        string multiLang =  strength == 3 ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכלמנסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";   
+        string uppercase =  options[0] == null ? "" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string numbers = options[1] == null ? "" : "0123456789๑๒๓๔๕๖๗๘๙๑๐一二三四五六七八九十";   //english , thai and japanese numbers
+        string specChars = options[2] == null ? "": "!@#$%^&*()_+{}|:<>?-=[];',./";
+        string ambiguous =  options[3] == null ? "": "il1Lo0O";
+        bool noDupes = options[4] != null;
+        bool noSeq = options[5] != null;
+
+        //future enhancement with custom codex for character representations not available on standard keyboard
+            // Hashtable codex = new(); 
+            // codex.Add("p", "/>");
+            // codex.Add("e", "£");
 
         string allChars = Lowercase + uppercase + numbers + specChars + symbols + multiLang;
 
         foreach(char am in ambiguous){
-            allChars = allChars.Replace(am.ToString(), "");
+         allChars = allChars.Replace(am.ToString(), "");
         }
 
-        StringBuilder password = new StringBuilder();
+        StringBuilder password = new();
 
-        Random random = new Random(GetSecureSeed());
-
+        Random random = new(GetSecureSeed());
 
         while (password.Length <= length)
         {
@@ -56,7 +67,6 @@ class Dexter
 
             password.Append(nextChar);
         }
-    
         return password.ToString();
     }
 
@@ -65,18 +75,15 @@ class Dexter
     }   
 
     public static int GetSecureSeed(){
-        using (var rng =  RandomNumberGenerator.Create())
-        {
-            byte[] bytes = new byte[4];
+        using var rng = RandomNumberGenerator.Create();
+            byte[] bytes = new byte[64];
             rng.GetBytes(bytes);
             return BitConverter.ToInt32(bytes, 0);
-        }
     }
 
     public static byte[] GenerateSalt()
     {
-        byte[] salt = new byte[32];
-        byte[] pepper = new byte[32];
+        byte[] salt = new byte[128];
         using (var rng = RandomNumberGenerator.Create())
         {
           rng.GetBytes(salt);
@@ -90,21 +97,18 @@ class Dexter
 
         var algo = AnsiConsole.Prompt(
              new SelectionPrompt<string>()
-            .Title("Select the desired hash algorithm")
+            .Title("How Should Dexter hide your Secrete")
             .AddChoices( new [] {
-                  "Argon2id",
-                  "SCrypt"
+                  "1. Argon2id",
+                  "2. SCrypt"
             }));
-        
-            switch (algo)
-            {
-                case "Argon2id":
-                    return getArgon2Hash(password, GenerateSalt());
-                case "SCrypt":
-                    return getSCryptHash(password, GenerateSalt());
-                default:
-                    throw new Exception("Invalid input, please enter a number between 1 and 2");
-            }
+
+        return algo switch
+        {
+            "1. Argon2id" => getArgon2Hash(password, GenerateSalt()),
+            "2. SCrypt" => getSCryptHash(password, GenerateSalt()),
+            _ => throw new Exception("Invalid input, please enter a number between 1 and 2"),
+        };
     }
 
     public static string getArgon2Hash(string password, byte[] salt)
@@ -150,12 +154,124 @@ class Dexter
         Console.WriteLine();
     }
 
-    public static async void run()
+    public static async void PasswordGen()
     {
          try{
+            showHeader();
+            Type("Set password length: [min recommended: 17]");
+            int length = int.Parse(Console.ReadLine());
 
-            Console.Title = "Dexter v1.1";
-            Console.SetWindowSize(85, 30);
+            List<string> strengthOptions = ["1. Absurdly Strong","2. Even Mightier","3. Dexters Special Brew"];
+            strengthOptions.ForEach(x => Type(x));
+            int strength = int.Parse(Console.ReadLine());
+            Console.Clear();
+            showHeader();
+            var options = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<string>()
+                .Title("Tell Dexter How?")
+                .InstructionsText("[grey](Press [blue]<space>[/] to toggle an option, " + 
+                                  "[green]<enter>[/] to continue)[/]")
+                .AddChoices(new[] {
+                        "Uppercase Letters", "Numbers", "Special Characters",
+                        "Visually Ambiguous Characters", "Duplicate Characters", "Sequential Characters",
+                }));
+
+            string password = GeneratePassword(length,strength,options);
+            Console.WriteLine(" ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Type($"Your Super Cooked Secure Password: {password}"); 
+            await SubMenu(password);
+       }catch(IOException){
+           Console.WriteLine("Invalid input, please try again");
+           PasswordGen();
+       }catch(Exception e){
+           Console.WriteLine(e.Message);
+           PasswordGen();
+       }
+    }
+
+    public static async Task SubMenu(string password){       //1. make 3rd option to see hash , 2. change to selection menue
+        var option = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .Title("Password Menu")
+            .AddChoices(new[]{
+                "1. Generate Another Password","2. Save Previously Generated Password",
+                "3. Main Menu","4. Exit"
+            }));
+
+        switch(option){
+            case "1. Generate Another Password": Console.Clear();
+            PasswordGen();
+            break;
+            case "2. Save Previously Generated Password": await SaveAync(getHash(password)); 
+            break;
+            case "3. Main Menu": Console.Clear();
+            TestMenue();
+            break;
+            case "4. Exit": Environment.Exit(0);
+            break;
+            default: await SubMenu(password); break;
+        }  
+    }
+
+    public static async Task SaveAync(string hash){
+       try{
+            Type("Give the password a name");
+            string? name = Console.ReadLine();
+                
+            var path = "yourPasswords.csv";
+
+            using var reader = new StreamReader(path);
+            if (reader.ReadToEnd().Contains(name))
+            {
+                Type("Password has already been saved");
+            }
+            else
+            {
+                using (var writer = new StreamWriter(path))
+                {
+                    await writer.WriteLineAsync("Password_Name , Hash");
+                    await writer.WriteLineAsync(" ");
+                    await writer.WriteLineAsync($"{name} , {hash}");
+                }
+                Type("Password saved to 'yourPasswords.csv'");
+            }
+        }
+        catch(FileNotFoundException e){Type(e.Message);
+       }catch(Exception e ){Type(e.Message);}
+    }
+
+    public static void TestMenue()  //new features for Dextera and improvement to navigation for Dexter v2 
+    {      
+        showHeader();
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        var option = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .Title("What can Dexter do for you?")
+            .AddChoices([
+                "1. Secure Password Generation",
+                "2. File Encyption/Decryption",
+                "3. General File Health Checks(Zips)",
+                "4. Data Compression/Decompression",
+                "5. System Information",
+                "6. Nothing"
+            ])); 
+            switch(string.Format(option)){
+                case "1. Secure Password Generation" : Console.Clear();
+                PasswordGen();
+                break;
+                case "2. File Encyption/Decryption": break;
+                case "3. General File Health Checks(Zips)": break;
+                case "4. Data Compression/Decompression": break;
+                case "5. System Information" : break;
+                case "6. Nothing" : Environment.Exit(0); break;
+            }   
+            Console.Clear();
+    }
+
+    public static void showHeader(){  // update ascii style 
+            Console.Title = "Dexter v1.2";
+            //Console.SetWindowSize(0, 30);
             string name = @"
              /$$$$$$$                       /$$                        
             | $$__  $$                     | $$                        
@@ -166,173 +282,9 @@ class Dexter
             | $$$$$$$/|  $$$$$$$ /$$/\  $$ |  $$$$/|  $$$$$$$| $$      
             |_______/  \_______/|__/  \__/  \___ /  \_______/|__/       v1.1";
 
-            
             Console.WriteLine(name);
+            Console.WriteLine("___________________________________");
             Console.WriteLine(" ");
-            Console.WriteLine(" ____  _  _  ____  __  __  __  __");
-            Console.WriteLine(" ");
-
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Type("Set password length: [min recommended: 17]");
-            int legnth = int.Parse(Console.ReadLine());
-            
-            Type("Specify Password strength: [1-3]");
-            int strength = int.Parse(Console.ReadLine());
-            
-            Console.Clear();
-            Console.WriteLine(name);
-            Console.WriteLine(" ");
-
-            Type("Include uppercase letters? [y/n]");
-            bool upper = Console.ReadLine().ToLower() == " y" ? true : false;
-
-            Type("Include numbers? [y/n]");
-            bool nums = Console.ReadLine().ToLower() == "y" ? true : false;
-
-            Type("Include special characters? [y/n]");
-            bool special = Console.ReadLine().ToLower() == "y" ? true : false;
-
-            Console.Clear();
-            Console.WriteLine(name);
-            Console.WriteLine(" ");
-
-            Type("Exclude visually ambiguous characters? [y/n]");
-            bool avoidAmbiguous = Console.ReadLine().ToLower() == "y" ? true : false;
-
-            Type("Void duplicate characters? [y/n]");
-            bool noDupes = Console.ReadLine().ToLower() == "y" ? true : false;
-
-            Type("Void sequential characters? [y/n]");
-            bool noSeq = string.Equals(Console.ReadLine().ToLower(),"y") ? true : false;
-                            
-            Console.Clear();
-            Console.WriteLine(name);
-            Console.WriteLine();
-            
-            string password = GeneratePassword(legnth, upper, nums , special , strength , avoidAmbiguous , noDupes , noSeq);
-           
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(name);
-            Console.WriteLine(" ");
-
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Type($"Your Super Cooked Secure Password: {password}"); 
-
-            await SubMenu(password);
-
-                    
-            /*Console.WriteLine(" ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Type("View password hash? [y/n]");
-            bool get = Console.ReadLine().ToLower() == "y" ? true : false;
-            
-            if(get){           
-                try {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                     Type($"Hashed password: {getHash(password)}");
-                     Menu(getHash(password)); 
-                }catch(Exception e){
-                    getHash(password);
-                    Console.WriteLine(e.Message);
-                }
-            }*/
-       }catch(IOException){
-           Console.WriteLine("Invalid input, please try again");
-           Main();
-       }catch(Exception e){
-           Console.WriteLine(e.Message);
-       }
     }
-    
-
-    public static void Entry(){
-
-         while(true){
-            var select = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-            .Title("What Can Dexter Do For You")
-            .AddChoices(new[] {
-                "Secure Password Generation",
-                "Nothing"
-          })); 
-
-          switch(select){
-              case "Secure Password Generation": run();
-                      break;
-              case "Nothing":
-                    Type("Until next time!");
-                    Environment.Exit(10);
-                    break;
-            default: 
-                    Type("Be serious here, Okay!");
-                    break;
-          }
-        }   
-    }
-
-    public static async Task SubMenu(string password){       //1. make 3rd option to see hash , 2. change to selection menue
-        while(true){
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("1. Generate Another Password"); 
-                Console.WriteLine("2. Save Password");
-                Console.WriteLine("3. Main Menu");
-                Console.WriteLine("4. Exit ");
-
-                int choice = int.Parse(Console.ReadLine());
-
-                switch(choice){
-                    case 1: 
-                        Console.Clear();
-                        run();
-                        break;
-                    case 2: 
-                        Type(await SaveAync(getHash(password))); 
-                        break;
-                    case 3: 
-                        Console.Clear();
-                        Entry();
-                        break;
-                    case 4: 
-                        Environment.Exit(0);
-                        break;
-                    default: 
-                        Type("Invalid input, please enter a number between 1 and 2");
-                        break;
-                }
-        }
-    }
-
-    public static async Task<string> SaveAync(string hash){
-
-        Type("Give the password a name");
-        string? name = Console.ReadLine();
-        Console.WriteLine(" ");
-            
-        var path = "yourPasswords.csv";
-
-        using var writer = new StreamWriter(path);
-        await writer.WriteLineAsync("Password_Name , Hash");
-        await writer.WriteLineAsync(" ");
-        await writer.WriteLineAsync($"{name} , {hash}");
-
-        return "Password Saved locally to yourPasswords.csv ";
-    }
-
-    // public static void TestMenue()  //new features for Dextera and improvement to navigation for Dexter v2 
-    // {      
-
-    //         var option = AnsiConsole.Prompt(
-    //             new SelectionPrompt<string>()
-    //             .Title("What can Dexter do for you?")
-    //             .AddChoices(new[] {
-    //                 "Secure Password Generation",
-    //                 "File Encyption/Decryption",
-    //                 "General File Health Checks(Zips)",
-    //                 "Data Compression/Decompression",
-    //                 "System Information",
-    //                 "Nothing"
-    //          }));    
-    // }
  }
  
