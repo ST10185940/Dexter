@@ -249,22 +249,22 @@ class Dexter
             new SelectionPrompt<string>()
             .Title("What can Dexter do for you?")
             .AddChoices([
-                "1. Secure Password Generation",
-                "2. File Encyption/Decryption",
-                "3. General File Health Checks(Zips)",
-                "4. Data Compression/Decompression",
-                "5. System Information",
-                "6. Nothing"
+                "1. Secure Password Generation"
+                // "2. File Encyption/Decryption",
+                // "3. General File Health Checks(Zips)",
+                // "4. Data Compression/Decompression",
+                // "5. System Information",
+                // "6. Nothing"
             ])); 
             switch(string.Format(option)){
                 case "1. Secure Password Generation" : Console.Clear();
                 PasswordGen();
                 break;
-                case "2. File Encyption/Decryption": break;
-                case "3. General File Health Checks(Zips)": break;
-                case "4. Data Compression/Decompression": break;
-                case "5. System Information" : break;
-                case "6. Nothing" : Environment.Exit(0); break;
+                // case "2. File Encyption/Decryption": break;
+                // case "3. General File Health Checks(Zips)": break;
+                // case "4. Data Compression/Decompression": break;
+                // case "5. System Information" : break;
+                // case "6. Nothing" : Environment.Exit(0); break;
             }   
             Console.Clear();
     }
