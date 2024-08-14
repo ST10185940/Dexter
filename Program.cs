@@ -2,22 +2,19 @@ using Konscious.Security.Cryptography;
 using System.Text;
 using System.Security.Cryptography;
 using Scrypt;
-using PasswordGenerator;
 using Spectre.Console;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using System.Security.Cryptography.X509Certificates;
+
 
 
 class Dexter
 {
-    #pragma warning disable CS8602 // Dereference of a possibly null reference.
+    //#pragma warning disable CS8602 // Dereference of a possibly null reference.
     #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'int int.Parse(string s)'.
-    #pragma warning disable CA1416
+    //#pragma warning disable CA1416
 
     private protected static void Main(){        
         Console.OutputEncoding = Encoding.UTF8;
-        TestMenue();
+        Menu();
     }   
 
     private protected static string GeneratePassword(int length , int strength, List<string> options )
@@ -102,9 +99,9 @@ class Dexter
         return salt;
     }
 
-    private protected static string getHash(string password)
+    private protected static string GetHash(string password)
     {
-        password += getPepper();
+        password += GetPepper();
 
         var algo = AnsiConsole.Prompt(
              new SelectionPrompt<string>()
@@ -116,13 +113,13 @@ class Dexter
 
         return algo switch
         {
-            "1. Argon2id" => getArgon2Hash(password, GenerateSalt()),
-            "2. SCrypt" => getSCryptHash(password, GenerateSalt()),
+            "1. Argon2id" => GetArgon2Hash(password, GenerateSalt()),
+            "2. SCrypt" => GetSCryptHash(password, GenerateSalt()),
             _ => throw new Exception("Invalid input, please enter a number between 1 and 2"),
         };
     }
 
-    private protected static string getArgon2Hash(string password, byte[] salt)
+    private protected static string GetArgon2Hash(string password, byte[] salt)
     {
         var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
         {
@@ -134,7 +131,7 @@ class Dexter
         return Convert.ToBase64String(argon2.GetBytes(64));
     }
 
-    private protected static string getSCryptHash(string password, byte[] saltnPepper)
+    private protected static string GetSCryptHash(string password, byte[] saltnPepper)
     {
         string saltString  = Convert.ToBase64String(saltnPepper);
         string saltedPass =  saltString + password;
@@ -145,7 +142,7 @@ class Dexter
         return hashedPassword.Replace("-","");
     }
 
-    private protected static string getPepper()
+    private protected static string GetPepper()
     {
         byte[] pepper = new byte[32];
         using (var rng = RandomNumberGenerator.Create())
@@ -168,7 +165,7 @@ class Dexter
     private static async void PasswordGen()
     {
          try{
-            showHeader();
+            ShowHeader();
             Type("Set password length: [min recommended: 17]");
             int length = int.Parse(Console.ReadLine());
 
@@ -176,7 +173,7 @@ class Dexter
             strengthOptions.ForEach(x => Type(x));
             int strength = int.Parse(Console.ReadLine());
             Console.Clear();
-            showHeader();
+            ShowHeader();
             var options = AnsiConsole.Prompt(
                 new MultiSelectionPrompt<string>()
                 .Title("Tell Dexter How?")
@@ -214,10 +211,10 @@ class Dexter
             case "1. Generate Another Password": Console.Clear();
             PasswordGen();
             break;
-            case "2. Save Previously Generated Password": await SaveAync(getHash(password)); 
+            case "2. Save Previously Generated Password": await SaveAync(GetHash(password)); 
             break;
             case "3. Main Menu": Console.Clear();
-            TestMenue();
+            Menu();
             break;
             case "4. Exit": Environment.Exit(0);
             break;
@@ -252,9 +249,9 @@ class Dexter
        }catch(Exception e){Type(e.Message);}
     }
 
-    private static void TestMenue()  //new features for Dextera and improvement to navigation for Dexter v2 
+    private static void Menu()  //new features for Dextera and improvement to navigation for Dexter v2 
     {      
-        showHeader();
+        ShowHeader();
         Console.ForegroundColor = ConsoleColor.Cyan;
         var option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -280,7 +277,7 @@ class Dexter
             Console.Clear();
     }
 
-    private static void showHeader(){  // update ascii style 
+    private static void ShowHeader(){  // update ascii style 
             Console.Title = "Dexter v1.2";
             //Console.SetWindowSize(0, 30);
             string name = @"
