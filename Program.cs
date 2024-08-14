@@ -15,38 +15,49 @@ class Dexter
     #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'int int.Parse(string s)'.
     #pragma warning disable CA1416
 
-    private static void remix(){
-        
-    }
-    
-    public static void Main(){        
+    private protected static void Main(){        
         Console.OutputEncoding = Encoding.UTF8;
         TestMenue();
-        //run();
-        //Entry();
     }   
 
-    public static string GeneratePassword(int length , int strength, List<string> options )
+    private protected static string GeneratePassword(int length , int strength, List<string> options )
     {
         string Lowercase = "abcdefghijklmnopqrstuvwxyz";
         string symbols = strength >= 2 ?  "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
         string multiLang =  strength == 3 ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכלמנסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";   
-        string uppercase =  options[0] == null ? "" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        string numbers = options[1] == null ? "" : "0123456789๑๒๓๔๕๖๗๘๙๑๐一二三四五六七八九十";   //english , thai and japanese numbers
-        string specChars = options[2] == null ? "": "!@#$%^&*()_+{}|:<>?-=[];',./";
-        string ambiguous =  options[3] == null ? "": "il1Lo0O";
-        bool noDupes = options[4] != null;
-        bool noSeq = options[5] != null;
+        
+        var uppercaseSelected = options.Where(x => x.Contains("Uppercase Letters"));
+        string uppercase =  uppercaseSelected == null ? "" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        
+        var numbersSelected = options.Where(x => x.Contains("Numbers"));
+        string numbers = numbersSelected == null ? "" : "0123456789๑๒๓๔๕๖๗๘๙๑๐一二三四五六七八九十";   //english , thai and japanese numbers
+
+        var specSelected = options.Where(x => x.Contains("Special Characters"));
+        string specChars = specSelected == null ? "": "!@#$%^&*()_+{}|:<>?-=[];',./";
+
+        var ambigSelected = options.Where(x => x.Contains("Exclude Visually Ambiguous Characters"));
+        string ambiguous =  ambigSelected == null ? "": "il1Lo0O";
+       
+        var nodupesSelected = options.Where(x => x.Contains("Exclude duplicate Characters"));
+        bool noDupes = nodupesSelected != null;
+
+        var noSeqSelected = options.Where(x => x.Contains("Exclude Sequential Characters"));
+        bool noSeq = noSeqSelected != null;
 
         //future enhancement with custom codex for character representations not available on standard keyboard
-            // Hashtable codex = new(); 
-            // codex.Add("p", "/>");
-            // codex.Add("e", "£");
-
+            // Hashtable codex = new()
+            // {
+            //     { "p", "/>" },
+            //     { "e", "£" },
+            //     { "a", "@" }
+            // }; 
+ 
         string allChars = Lowercase + uppercase + numbers + specChars + symbols + multiLang;
 
-        foreach(char am in ambiguous){
-         allChars = allChars.Replace(am.ToString(), "");
+        if(!string.IsNullOrEmpty(ambiguous)){
+            foreach(char am in ambiguous){
+             allChars = allChars.Replace(am.ToString(), "");
+            }
         }
 
         StringBuilder password = new();
@@ -61,7 +72,7 @@ class Dexter
         
             if (noSeq && password.Length > 0)
             {
-                char lastChar = password[password.Length - 1];
+                char lastChar = password[^1]; // simply:  password.Length -1
                 if(IsSequential(lastChar, nextChar)) continue;          
             }
 
@@ -70,18 +81,18 @@ class Dexter
         return password.ToString();
     }
 
-    public static bool IsSequential(char a , char b ){
+    private protected static bool IsSequential(char a , char b ){
         return Math.Abs(a-b) == 1;
     }   
 
-    public static int GetSecureSeed(){
+    private protected static int GetSecureSeed(){
         using var rng = RandomNumberGenerator.Create();
             byte[] bytes = new byte[64];
             rng.GetBytes(bytes);
             return BitConverter.ToInt32(bytes, 0);
     }
 
-    public static byte[] GenerateSalt()
+    private protected static byte[] GenerateSalt()
     {
         byte[] salt = new byte[128];
         using (var rng = RandomNumberGenerator.Create())
@@ -91,17 +102,17 @@ class Dexter
         return salt;
     }
 
-    public static string getHash(string password)
+    private protected static string getHash(string password)
     {
         password += getPepper();
 
         var algo = AnsiConsole.Prompt(
              new SelectionPrompt<string>()
             .Title("How Should Dexter hide your Secrete")
-            .AddChoices( new [] {
+            .AddChoices( [
                   "1. Argon2id",
                   "2. SCrypt"
-            }));
+            ]));
 
         return algo switch
         {
@@ -111,7 +122,7 @@ class Dexter
         };
     }
 
-    public static string getArgon2Hash(string password, byte[] salt)
+    private protected static string getArgon2Hash(string password, byte[] salt)
     {
         var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
         {
@@ -123,7 +134,7 @@ class Dexter
         return Convert.ToBase64String(argon2.GetBytes(64));
     }
 
-    public static string getSCryptHash(string password, byte[] saltnPepper)
+    private protected static string getSCryptHash(string password, byte[] saltnPepper)
     {
         string saltString  = Convert.ToBase64String(saltnPepper);
         string saltedPass =  saltString + password;
@@ -134,7 +145,7 @@ class Dexter
         return hashedPassword.Replace("-","");
     }
 
-    public static string getPepper()
+    private protected static string getPepper()
     {
         byte[] pepper = new byte[32];
         using (var rng = RandomNumberGenerator.Create())
@@ -144,7 +155,7 @@ class Dexter
         return Convert.ToBase64String(pepper);
     }
 
-    public static void Type(string text)
+    private static void Type(string text)
     {
         foreach (char c in text)
         {
@@ -154,7 +165,7 @@ class Dexter
         Console.WriteLine();
     }
 
-    public static async void PasswordGen()
+    private static async void PasswordGen()
     {
          try{
             showHeader();
@@ -171,10 +182,11 @@ class Dexter
                 .Title("Tell Dexter How?")
                 .InstructionsText("[grey](Press [blue]<space>[/] to toggle an option, " + 
                                   "[green]<enter>[/] to continue)[/]")
-                .AddChoices(new[] {
+                .AddChoices([
                         "Uppercase Letters", "Numbers", "Special Characters",
-                        "Visually Ambiguous Characters", "Duplicate Characters", "Sequential Characters",
-                }));
+                        "Exclude Visually Ambiguous Characters", "Exclude duplicate Characters", "Exclude Sequential Characters",
+                ]));
+
 
             string password = GeneratePassword(length,strength,options);
             Console.WriteLine(" ");
@@ -190,14 +202,14 @@ class Dexter
        }
     }
 
-    public static async Task SubMenu(string password){       //1. make 3rd option to see hash , 2. change to selection menue
+    private static async Task SubMenu(string password){       //1. make 3rd option to see hash , 2. change to selection menue
         var option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
             .Title("Password Menu")
-            .AddChoices(new[]{
+            .AddChoices([
                 "1. Generate Another Password","2. Save Previously Generated Password",
                 "3. Main Menu","4. Exit"
-            }));
+            ]));
 
         switch(option){
             case "1. Generate Another Password": Console.Clear();
@@ -214,7 +226,7 @@ class Dexter
         }  
     }
 
-    public static async Task SaveAync(string hash){
+    private static async Task SaveAync(string hash){
        try{
             Type("Give the password a name");
             string? name = Console.ReadLine();
@@ -238,10 +250,10 @@ class Dexter
             }
         }
         catch(FileNotFoundException e){Type(e.Message);
-       }catch(Exception e ){Type(e.Message);}
+       }catch(Exception e){Type(e.Message);}
     }
 
-    public static void TestMenue()  //new features for Dextera and improvement to navigation for Dexter v2 
+    private static void TestMenue()  //new features for Dextera and improvement to navigation for Dexter v2 
     {      
         showHeader();
         Console.ForegroundColor = ConsoleColor.Cyan;
@@ -249,27 +261,27 @@ class Dexter
             new SelectionPrompt<string>()
             .Title("What can Dexter do for you?")
             .AddChoices([
-                "1. Secure Password Generation"
-                // "2. File Encyption/Decryption",
-                // "3. General File Health Checks(Zips)",
-                // "4. Data Compression/Decompression",
-                // "5. System Information",
-                // "6. Nothing"
+                "1. Secure Password Generation",
+                "2. File Encyption/Decryption",
+                "3. General File Health Checks(Zips)",
+                "4. Data Compression/Decompression",
+                "5. System Information",
+                "6. Nothing"
             ])); 
             switch(string.Format(option)){
                 case "1. Secure Password Generation" : Console.Clear();
                 PasswordGen();
                 break;
-                // case "2. File Encyption/Decryption": break;
-                // case "3. General File Health Checks(Zips)": break;
-                // case "4. Data Compression/Decompression": break;
-                // case "5. System Information" : break;
-                // case "6. Nothing" : Environment.Exit(0); break;
+                case "2. File Encyption/Decryption": break;
+                case "3. General File Health Checks(Zips)": break;
+                case "4. Data Compression/Decompression": break;
+                case "5. System Information" : break;
+                case "6. Nothing" : Environment.Exit(0); break;
             }   
             Console.Clear();
     }
 
-    public static void showHeader(){  // update ascii style 
+    private static void showHeader(){  // update ascii style 
             Console.Title = "Dexter v1.2";
             //Console.SetWindowSize(0, 30);
             string name = @"
