@@ -172,7 +172,7 @@ class Dexter
             Type("Set password length: [min recommended: 17]");
             int length = int.Parse(Console.ReadLine());
 
-            List<string> strengthOptions = ["1. Absurdly Strong","2. Even Mightier","3. Dexters Special Brew"];
+            List<string> strengthOptions = ["1. Absurdly Strong (!WARNING: Anything stronger may not usable)","2. Even Mightier","3. Dexters Special Brew"];
             strengthOptions.ForEach(x => Type(x));
             int strength = int.Parse(Console.ReadLine());
             Console.Clear();
@@ -187,11 +187,10 @@ class Dexter
                         "Exclude Visually Ambiguous Characters", "Exclude duplicate Characters", "Exclude Sequential Characters",
                 ]));
 
-
             string password = GeneratePassword(length,strength,options);
             Console.WriteLine(" ");
             Console.ForegroundColor = ConsoleColor.Green;
-            Type($"Your Super Cooked Secure Password: {password}"); 
+            Type($"Your Super Cooked Secure Password: {password.Trim()}"); 
             await SubMenu(password);
        }catch(IOException){
            Console.WriteLine("Invalid input, please try again");
