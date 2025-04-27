@@ -1,6 +1,6 @@
 using System;
 
-namespace FileHealthCheck
+namespace DxtrHealthCheck
 {
     
 }
