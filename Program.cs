@@ -26,7 +26,7 @@ class Dexter
         Menu();
     }
 
-    private static string GeneratePassword(int length , int strength, List<string> options )
+    private static string GeneratePassword(int length , int strength, List<string> options)
     {
         string Lowercase = "abcdefghijklmnopqrstuvwxyz";
         string symbols = strength >= 2 ? "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
@@ -84,14 +84,17 @@ class Dexter
 
             password.Append(nextChar);
         }
+
         return password.ToString();
     }
 
-    private static bool IsSequential(char a , char b ){
+    private static bool IsSequential(char a , char b )
+    {
         return Math.Abs(a-b) == 1;
     }
 
-    private static int GetSecureSeed(){
+    private static int GetSecureSeed()
+    {
         using var rng = RandomNumberGenerator.Create();
             byte[] bytes = new byte[64];
             rng.GetBytes(bytes);
@@ -105,6 +108,7 @@ class Dexter
         {
           rng.GetBytes(salt);
         }
+
         return salt;
     }
 
@@ -137,6 +141,7 @@ class Dexter
             MemorySize = 16200,
             Iterations = 100000
         };
+
         return Convert.ToBase64String(argon2.GetBytes(64));
     }
 
@@ -219,6 +224,7 @@ class Dexter
     }
 
     private static async Task SubMenu(string password){
+
         var option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
             .Title("Password Menu")
@@ -229,35 +235,36 @@ class Dexter
                 "4. Exit"
             ]));
                
-
         switch(option){
             case "1. Generate Another Password": Console.Clear();
-            PasswordGen();
-            break;
-            case "2. Save Previously Generated Password": await SaveAync(GetHash(password));
-            break;
+                PasswordGen();
+                break;
+            case "2. Save Previously Generated Password":
+                await SaveAsync(GetHash(password));
+                break;
             case "3. Main Menu": Console.Clear();
-            Menu();
-            break;
+                Menu();
+                break;
             case "4. Exit": Environment.Exit(0);
-            break;
+                break;
             default: await SubMenu(password); break;
         }
     }
 
-    private static async Task SaveAync(string hash){
-       try{
+    private static async Task SaveAsync(string hash){
+        try
+        {
             Type("Name the password");
             string? name = Console.ReadLine();
 
-            Password saved = new(name,hash);
+            Password saved = new(name, hash);
 
             var path = "Dexter/yourPasswords.csv";
             string content = File.ReadAllText(path);
 
             using var reader = new StreamReader(path);
             if (content.Contains(name))
-             Type("Password has already been saved");
+                Type("Password has already been saved");
             else
             {
                 using (var writer = new StreamWriter(path))
@@ -269,14 +276,19 @@ class Dexter
                 Type("Password saved");
             }
         }
-        catch(FileNotFoundException e){Type(e.Message);
-       }catch(Exception e){Type(e.Message);}
+        catch (FileNotFoundException e)
+        {
+            Type(e.Message);
+        }
+        catch (Exception e) { Type(e.Message); }
     }
 
     private static void Menu()
     {
         ShowHeader();
+
         Console.ForegroundColor = ConsoleColor.Cyan;
+
         var option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
             .Title("What can Dexter do for you?")
@@ -288,20 +300,24 @@ class Dexter
                 "5. System Information",
                 "6. Nothing"
             ]));
-            switch(string.Format(option)){
-                case "1. Secure Password Generation" : Console.Clear();
+
+        switch (string.Format(option))
+        {
+            case "1. Secure Password Generation":
+                Console.Clear();
                 PasswordGen();
                 break;
-                case "2. File Encryption/Decryption": break;
-                case "3. General File Health Checks(Zips)": break;
-                case "4. Data Compression/Decompression": break;
-                case "5. System Information" : break;
-                case "6. Nothing" : Environment.Exit(0); break;
-            }
-            Console.Clear();
+            case "2. File Encryption/Decryption": break;
+            case "3. General File Health Checks(Zips)": break;
+            case "4. Data Compression/Decompression": break;
+            case "5. System Information": break;
+            case "6. Nothing": Environment.Exit(0); break;
+        }
+
+        Console.Clear();
     }
 
-    private static void ShowHeader(){  // update ascii style
+    private static void ShowHeader(){
             Console.Title = "Dexter v1.2";
             string name = @"
              /$$$$$$$                       /$$

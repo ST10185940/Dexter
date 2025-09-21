@@ -48,12 +48,10 @@ namespace DxtrEncryption
 
            try{
 
-                using (var aesGcm = new AesGcm(key))
-                {
-                    aesGcm.Encrypt(nonce, fileData, cipherText, tag);  
-                }
+                using var aesGcm = new AesGcm(key);
+                aesGcm.Encrypt(nonce, fileData, cipherText, tag);
 
-           }finally{
+            } finally{
 
              if (keyHandle.IsAllocated) keyHandle.Free();
              if (dataHandle.IsAllocated) dataHandle.Free();
@@ -61,6 +59,7 @@ namespace DxtrEncryption
            }
 
             try{
+                  
                 string tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
                 using (var OutputStream = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Encrypted | FileOptions.WriteThrough))
                 using (var writer = new BinaryWriter(OutputStream))
@@ -79,7 +78,7 @@ namespace DxtrEncryption
                 
                 File.Move(tempFile, destinationPath);
 
-            }finally{
+            } finally {
 
                 if (fileData != null) Array.Clear(fileData, 0, fileData.Length);
                 if (cipherText != null) Array.Clear(cipherText, 0, cipherText.Length);
@@ -91,7 +90,7 @@ namespace DxtrEncryption
         }
 
 
-        private static void SecureDelete(string filePath)
+        private static void SecureDelete(string filePath) 
         {
             if (!File.Exists(filePath)) return;
 
@@ -105,7 +104,6 @@ namespace DxtrEncryption
                 for (int pass = 0; pass < 3; pass++){
                     fs.Position = 0;
                     long bytesLeft = length;
-
                     using (var rng =  RandomNumberGenerator.Create()){
                         rng.GetBytes(buffer);
                     }
