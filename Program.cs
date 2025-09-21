@@ -5,7 +5,7 @@ using Scrypt;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations;
 using DxtrEncryption;
-// using DxtrHealthCheck; - soon (b4 the file compression remember)
+using DxtrHealthCheck;
 
 class Dexter
 {

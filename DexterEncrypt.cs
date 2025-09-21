@@ -6,7 +6,7 @@ namespace DxtrEncryption
     public class DxCrypt()
    {
         private const int KeySize = 32, TagSize = 32, SaltSize = 32, Iterations = 100000;
-        private const int NonceSize = 24; // number once size 
+        private const int NonceSize = 24; 
 
         private static void Encrypt(string sourcePath, string destinationPath, string password){
             
@@ -22,7 +22,7 @@ namespace DxtrEncryption
             {
                 fileData = new byte[fs.Length];
                 fs.Read(fileData, 0, fileData.Length);
-            } //change later to read the file in chunks and not load it entirely into memory
+            } //read in chunks
 
 
             byte[] salt = new byte[SaltSize];
@@ -72,7 +72,7 @@ namespace DxtrEncryption
                     OutputStream.Flush(true);
                 }
 
-                // if (!VerifyEncryptedFileIntegrity) //do this later. compare byte size and salt, nonce , ciphertext (current vs expected or something...) etc are intact and stored correctly 
+                //TODO: VerifyEncryptedFileIntegrity
 
                 if (!File.Exists(destinationPath)) SecureDelete(destinationPath);
                 
@@ -135,7 +135,7 @@ namespace DxtrEncryption
 
             byte[] fileContent;
 
-            //Directory.CreateDirectory(Path.GetDirectoryName(destinationPath) ?? string.Empty);
+            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
             try{
 

@@ -1,5 +1,5 @@
 {
-    "editor.minimap.autohide": true,
+    "editor.minimap.autohide": "mouseover",
     "editor.cursorBlinking": "smooth",
     "editor.cursorSmoothCaretAnimation": "on",
     "editor.cursorWidth": 0,
