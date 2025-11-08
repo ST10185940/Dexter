@@ -1,15 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "gbNHhTsug6c=",
+  "dgSpecHash": "cxGPaSaHIQQ=",
   "success": true,
   "projectFilePath": "C:\\Users\\blazi\\Desktop\\w&ps\\dexter\\PasswordGenerator.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\blazi\\.nuget\\packages\\konscious.security.cryptography.argon2\\1.3.0\\konscious.security.cryptography.argon2.1.3.0.nupkg.sha512",
     "C:\\Users\\blazi\\.nuget\\packages\\konscious.security.cryptography.blake2\\1.1.0\\konscious.security.cryptography.blake2.1.1.0.nupkg.sha512",
+    "C:\\Users\\blazi\\.nuget\\packages\\nstack.core\\1.1.1\\nstack.core.1.1.1.nupkg.sha512",
     "C:\\Users\\blazi\\.nuget\\packages\\scrypt.net\\1.3.0\\scrypt.net.1.3.0.nupkg.sha512",
-    "C:\\Users\\blazi\\.nuget\\packages\\spectre.console\\0.48.0\\spectre.console.0.48.0.nupkg.sha512",
-    "C:\\Users\\blazi\\.nuget\\packages\\spectre.console.cli\\0.48.0\\spectre.console.cli.0.48.0.nupkg.sha512",
-    "C:\\Users\\blazi\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512"
+    "C:\\Users\\blazi\\.nuget\\packages\\system.codedom\\8.0.0\\system.codedom.8.0.0.nupkg.sha512",
+    "C:\\Users\\blazi\\.nuget\\packages\\system.management\\8.0.0\\system.management.8.0.0.nupkg.sha512",
+    "C:\\Users\\blazi\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
+    "C:\\Users\\blazi\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512",
+    "C:\\Users\\blazi\\.nuget\\packages\\terminal.gui\\1.16.0\\terminal.gui.1.16.0.nupkg.sha512"
   ],
   "logs": []
 }

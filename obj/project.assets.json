@@ -32,6 +32,18 @@
           }
         }
       },
+      "NStack.Core/1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/NStack.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/NStack.dll": {}
+        }
+      },
       "Scrypt.NET/1.3.0": {
         "type": "package",
         "compile": {
@@ -41,56 +53,91 @@
           "lib/netstandard1.4/Scrypt.dll": {}
         }
       },
-      "Spectre.Console/0.48.0": {
+      "System.CodeDom/8.0.0": {
         "type": "package",
-        "dependencies": {
-          "System.Memory": "4.5.5"
-        },
         "compile": {
-          "lib/net8.0/Spectre.Console.dll": {
+          "lib/net8.0/System.CodeDom.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/Spectre.Console.dll": {
+          "lib/net8.0/System.CodeDom.dll": {
             "related": ".xml"
           }
+        },
+        "build": {
+          "buildTransitive/net6.0/_._": {}
         }
       },
-      "Spectre.Console.Cli/0.48.0": {
+      "System.Management/8.0.0": {
         "type": "package",
         "dependencies": {
-          "Spectre.Console": "0.48.0"
+          "System.CodeDom": "8.0.0"
         },
         "compile": {
-          "lib/net8.0/Spectre.Console.Cli.dll": {
+          "lib/net8.0/System.Management.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/Spectre.Console.Cli.dll": {
+          "lib/net8.0/System.Management.dll": {
             "related": ".xml"
           }
         },
-        "resource": {
-          "lib/net8.0/de/Spectre.Console.Cli.resources.dll": {
-            "locale": "de"
-          },
-          "lib/net8.0/fr/Spectre.Console.Cli.resources.dll": {
-            "locale": "fr"
-          },
-          "lib/net8.0/sv/Spectre.Console.Cli.resources.dll": {
-            "locale": "sv"
+        "build": {
+          "buildTransitive/net6.0/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net8.0/System.Management.dll": {
+            "assetType": "runtime",
+            "rid": "win"
           }
         }
       },
-      "System.Memory/4.5.5": {
+      "System.Memory/4.5.4": {
         "type": "package",
         "compile": {
           "ref/netcoreapp2.1/_._": {}
         },
         "runtime": {
           "lib/netcoreapp2.1/_._": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/_._": {}
+        }
+      },
+      "Terminal.Gui/1.16.0": {
+        "type": "package",
+        "dependencies": {
+          "NStack.Core": "1.1.1",
+          "System.Management": "8.0.0"
+        },
+        "compile": {
+          "lib/net7.0/Terminal.Gui.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/Terminal.Gui.dll": {
+            "related": ".xml"
+          }
+        },
+        "resource": {
+          "lib/net7.0/fr-FR/Terminal.Gui.resources.dll": {
+            "locale": "fr-FR"
+          },
+          "lib/net7.0/ja-JP/Terminal.Gui.resources.dll": {
+            "locale": "ja-JP"
+          },
+          "lib/net7.0/pt-PT/Terminal.Gui.resources.dll": {
+            "locale": "pt-PT"
+          }
         }
       }
     }
@@ -130,6 +177,20 @@
         "lib/netstandard1.3/Konscious.Security.Cryptography.Blake2.xml"
       ]
     },
+    "NStack.Core/1.1.1": {
+      "sha512": "5LhlYsmAe3A55zl8xCSD7AbuhDqZODpsfdMGgtygeBlHZmlb0tHmK5/PeKODnwYUhC6EbL2qHKGskPNvpY+z3w==",
+      "type": "package",
+      "path": "nstack.core/1.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/netstandard2.0/NStack.dll",
+        "logo48.png",
+        "nstack.core.1.1.1.nupkg.sha512",
+        "nstack.core.nuspec"
+      ]
+    },
     "Scrypt.NET/1.3.0": {
       "sha512": "vE6x8kHoVP5jDM5JjwdiFDJzlFAf+bkBUEkLdZyGDROXdNygrn+8NdFTxlE5V6FbeZ6TDAKx56RurldjinZkDQ==",
       "type": "package",
@@ -143,62 +204,72 @@
         "scrypt.net.nuspec"
       ]
     },
-    "Spectre.Console/0.48.0": {
-      "sha512": "4Mc1UT7Azgtyb8FyNwK5FZmoZbKuT5PmY7ZwaKUytjD5kGFMNBACpOZTwYtkuY377YkYtZYBeDDTJUwTW86QXw==",
+    "System.CodeDom/8.0.0": {
+      "sha512": "WTlRjL6KWIMr/pAaq3rYqh0TJlzpouaQ/W1eelssHgtlwHAH25jXTkUphTYx9HaIIf7XA6qs/0+YhtLEQRkJ+Q==",
       "type": "package",
-      "path": "spectre.console/0.48.0",
+      "path": "system.codedom/8.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "lib/net6.0/Spectre.Console.dll",
-        "lib/net6.0/Spectre.Console.xml",
-        "lib/net7.0/Spectre.Console.dll",
-        "lib/net7.0/Spectre.Console.xml",
-        "lib/net8.0/Spectre.Console.dll",
-        "lib/net8.0/Spectre.Console.xml",
-        "lib/netstandard2.0/Spectre.Console.dll",
-        "lib/netstandard2.0/Spectre.Console.xml",
-        "small-logo.png",
-        "spectre.console.0.48.0.nupkg.sha512",
-        "spectre.console.nuspec"
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net461/System.CodeDom.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net6.0/_._",
+        "buildTransitive/netcoreapp2.0/System.CodeDom.targets",
+        "lib/net462/System.CodeDom.dll",
+        "lib/net462/System.CodeDom.xml",
+        "lib/net6.0/System.CodeDom.dll",
+        "lib/net6.0/System.CodeDom.xml",
+        "lib/net7.0/System.CodeDom.dll",
+        "lib/net7.0/System.CodeDom.xml",
+        "lib/net8.0/System.CodeDom.dll",
+        "lib/net8.0/System.CodeDom.xml",
+        "lib/netstandard2.0/System.CodeDom.dll",
+        "lib/netstandard2.0/System.CodeDom.xml",
+        "system.codedom.8.0.0.nupkg.sha512",
+        "system.codedom.nuspec",
+        "useSharedDesignerContext.txt"
       ]
     },
-    "Spectre.Console.Cli/0.48.0": {
-      "sha512": "HNoDxAOTODQ9h+4K5Cs2caW8kIicRKw5SS4vgEEkJtnTp7/4XR8OIGvCjVi09w3m+xn4lTlkS0ENy2ktGz4HRw==",
+    "System.Management/8.0.0": {
+      "sha512": "jrK22i5LRzxZCfGb+tGmke2VH7oE0DvcDlJ1HAKYU8cPmD8XnpUT0bYn2Gy98GEhGjtfbR/sxKTVb+dE770pfA==",
       "type": "package",
-      "path": "spectre.console.cli/0.48.0",
+      "path": "system.management/8.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "lib/net6.0/Spectre.Console.Cli.dll",
-        "lib/net6.0/Spectre.Console.Cli.xml",
-        "lib/net6.0/de/Spectre.Console.Cli.resources.dll",
-        "lib/net6.0/fr/Spectre.Console.Cli.resources.dll",
-        "lib/net6.0/sv/Spectre.Console.Cli.resources.dll",
-        "lib/net7.0/Spectre.Console.Cli.dll",
-        "lib/net7.0/Spectre.Console.Cli.xml",
-        "lib/net7.0/de/Spectre.Console.Cli.resources.dll",
-        "lib/net7.0/fr/Spectre.Console.Cli.resources.dll",
-        "lib/net7.0/sv/Spectre.Console.Cli.resources.dll",
-        "lib/net8.0/Spectre.Console.Cli.dll",
-        "lib/net8.0/Spectre.Console.Cli.xml",
-        "lib/net8.0/de/Spectre.Console.Cli.resources.dll",
-        "lib/net8.0/fr/Spectre.Console.Cli.resources.dll",
-        "lib/net8.0/sv/Spectre.Console.Cli.resources.dll",
-        "lib/netstandard2.0/Spectre.Console.Cli.dll",
-        "lib/netstandard2.0/Spectre.Console.Cli.xml",
-        "lib/netstandard2.0/de/Spectre.Console.Cli.resources.dll",
-        "lib/netstandard2.0/fr/Spectre.Console.Cli.resources.dll",
-        "lib/netstandard2.0/sv/Spectre.Console.Cli.resources.dll",
-        "small-logo.png",
-        "spectre.console.cli.0.48.0.nupkg.sha512",
-        "spectre.console.cli.nuspec"
+        "Icon.png",
+        "LICENSE.TXT",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net6.0/_._",
+        "buildTransitive/netcoreapp2.0/System.Management.targets",
+        "lib/net462/_._",
+        "lib/net6.0/System.Management.dll",
+        "lib/net6.0/System.Management.xml",
+        "lib/net7.0/System.Management.dll",
+        "lib/net7.0/System.Management.xml",
+        "lib/net8.0/System.Management.dll",
+        "lib/net8.0/System.Management.xml",
+        "lib/netstandard2.0/System.Management.dll",
+        "lib/netstandard2.0/System.Management.xml",
+        "runtimes/win/lib/net6.0/System.Management.dll",
+        "runtimes/win/lib/net6.0/System.Management.xml",
+        "runtimes/win/lib/net7.0/System.Management.dll",
+        "runtimes/win/lib/net7.0/System.Management.xml",
+        "runtimes/win/lib/net8.0/System.Management.dll",
+        "runtimes/win/lib/net8.0/System.Management.xml",
+        "system.management.8.0.0.nupkg.sha512",
+        "system.management.nuspec",
+        "useSharedDesignerContext.txt"
       ]
     },
-    "System.Memory/4.5.5": {
-      "sha512": "XIWiDvKPXaTveaB7HVganDlOCRoj03l+jrwNvcge/t8vhGYKvqV+dMv6G4SAX2NoNmN0wZfVPTAlFwZcZvVOUw==",
+    "System.Memory/4.5.4": {
+      "sha512": "1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
       "type": "package",
-      "path": "system.memory/4.5.5",
+      "path": "system.memory/4.5.4",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -212,10 +283,82 @@
         "lib/netstandard2.0/System.Memory.dll",
         "lib/netstandard2.0/System.Memory.xml",
         "ref/netcoreapp2.1/_._",
-        "system.memory.4.5.5.nupkg.sha512",
+        "system.memory.4.5.4.nupkg.sha512",
         "system.memory.nuspec",
         "useSharedDesignerContext.txt",
         "version.txt"
+      ]
+    },
+    "System.ValueTuple/4.5.0": {
+      "sha512": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ==",
+      "type": "package",
+      "path": "system.valuetuple/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net461/System.ValueTuple.dll",
+        "lib/net461/System.ValueTuple.xml",
+        "lib/net47/System.ValueTuple.dll",
+        "lib/net47/System.ValueTuple.xml",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.0/System.ValueTuple.dll",
+        "lib/netstandard1.0/System.ValueTuple.xml",
+        "lib/netstandard2.0/_._",
+        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
+        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.xml",
+        "lib/uap10.0.16299/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net461/System.ValueTuple.dll",
+        "ref/net47/System.ValueTuple.dll",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard2.0/_._",
+        "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
+        "ref/uap10.0.16299/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.valuetuple.4.5.0.nupkg.sha512",
+        "system.valuetuple.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Terminal.Gui/1.16.0": {
+      "sha512": "RNF1uDSCgyzjCSVvAVkbRqkrotKPIeo6vto5pDiaFZgWY3wRGBPM5mpJcYwFr5Qd2PI5wj0ZgCB2DSAYOkdCHA==",
+      "type": "package",
+      "path": "terminal.gui/1.16.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net472/Terminal.Gui.dll",
+        "lib/net472/Terminal.Gui.xml",
+        "lib/net472/fr-FR/Terminal.Gui.resources.dll",
+        "lib/net472/ja-JP/Terminal.Gui.resources.dll",
+        "lib/net472/pt-PT/Terminal.Gui.resources.dll",
+        "lib/net7.0/Terminal.Gui.dll",
+        "lib/net7.0/Terminal.Gui.xml",
+        "lib/net7.0/fr-FR/Terminal.Gui.resources.dll",
+        "lib/net7.0/ja-JP/Terminal.Gui.resources.dll",
+        "lib/net7.0/pt-PT/Terminal.Gui.resources.dll",
+        "lib/netstandard2.1/Terminal.Gui.dll",
+        "lib/netstandard2.1/Terminal.Gui.xml",
+        "lib/netstandard2.1/fr-FR/Terminal.Gui.resources.dll",
+        "lib/netstandard2.1/ja-JP/Terminal.Gui.resources.dll",
+        "lib/netstandard2.1/pt-PT/Terminal.Gui.resources.dll",
+        "logo.png",
+        "terminal.gui.1.16.0.nupkg.sha512",
+        "terminal.gui.nuspec"
       ]
     }
   },
@@ -223,8 +366,8 @@
     "net8.0": [
       "Konscious.Security.Cryptography.Argon2 >= 1.3.0",
       "Scrypt.NET >= 1.3.0",
-      "Spectre.Console >= 0.48.0",
-      "Spectre.Console.CLI >= 0.48.0"
+      "System.Management >= 8.0.0",
+      "Terminal.Gui >= 1.16.0"
     ]
   },
   "packageFolders": {
@@ -271,7 +414,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0": {
@@ -285,13 +428,13 @@
             "target": "Package",
             "version": "[1.3.0, )"
           },
-          "Spectre.Console": {
+          "System.Management": {
             "target": "Package",
-            "version": "[0.48.0, )"
+            "version": "[8.0.0, )"
           },
-          "Spectre.Console.CLI": {
+          "Terminal.Gui": {
             "target": "Package",
-            "version": "[0.48.0, )"
+            "version": "[1.16.0, )"
           }
         },
         "imports": [
@@ -310,7 +453,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

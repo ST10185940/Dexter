@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
-namespace DxtrEncryption
+namespace DxtrEncrypt
 {
     public class DxCrypt()
    {
