@@ -82,7 +82,7 @@ class Dexter
         };
 
         btnPasswordGen.Clicked += () => ShowPasswordGen();
-        btnEncryption.Clicked += () => { };
+        btnEncryption.Clicked += () => ShowEncryptionMenu();
         btnHealthCheck.Clicked += () => { };
         btnCompression.Clicked += () => { };
         btnSystemInfo.Clicked += () => { };
@@ -401,6 +401,282 @@ class Dexter
         btnCancel.Clicked += () => ShowMainMenu();
 
         window.Add(lblName, txtName, lblStatus, btnSave, btnCancel);
+        Application.Top.Add(window);
+    }
+
+    private static void ShowEncryptionMenu()
+    {
+        Application.Top.RemoveAll();
+
+        var window = new Window("File Encryption/Decryption")
+        {
+            X = 0,
+            Y = 0,
+            Width = Dim.Fill(),
+            Height = Dim.Fill()
+        };
+
+        var lblTitle = new Label("What would you like to do?")
+        {
+            X = Pos.Center(),
+            Y = 2,
+            Width = 40
+        };
+
+        var btnEncrypt = new Button("1. Encrypt File")
+        {
+            X = Pos.Center(),
+            Y = 5,
+            Width = 30
+        };
+
+        var btnDecrypt = new Button("2. Decrypt File")
+        {
+            X = Pos.Center(),
+            Y = 7,
+            Width = 30
+        };
+
+        var btnBack = new Button("3. Back to Main Menu")
+        {
+            X = Pos.Center(),
+            Y = 9,
+            Width = 30
+        };
+
+        btnEncrypt.Clicked += () => ShowEncryptFile();
+        btnDecrypt.Clicked += () => ShowDecryptFile();
+        btnBack.Clicked += () => ShowMainMenu();
+
+        window.Add(lblTitle, btnEncrypt, btnDecrypt, btnBack);
+        Application.Top.Add(window);
+    }
+
+    private static void ShowEncryptFile()
+    {
+        Application.Top.RemoveAll();
+
+        var window = new Window("Encrypt File")
+        {
+            X = 0,
+            Y = 0,
+            Width = Dim.Fill(),
+            Height = Dim.Fill()
+        };
+
+        var lblSource = new Label("Source File Path:")
+        {
+            X = 1,
+            Y = 1,
+            Width = 20
+        };
+
+        var txtSource = new TextField("")
+        {
+            X = 1,
+            Y = 2,
+            Width = Dim.Fill() - 2
+        };
+
+        var lblDestination = new Label("Destination File Path:")
+        {
+            X = 1,
+            Y = 4,
+            Width = 20
+        };
+
+        var txtDestination = new TextField("")
+        {
+            X = 1,
+            Y = 5,
+            Width = Dim.Fill() - 2
+        };
+
+        var lblPassword = new Label("Password:")
+        {
+            X = 1,
+            Y = 7,
+            Width = 20
+        };
+
+        var txtPassword = new TextField("")
+        {
+            X = 1,
+            Y = 8,
+            Width = Dim.Fill() - 2,
+            Secret = true
+        };
+
+        var lblStatus = new Label("")
+        {
+            X = 1,
+            Y = 10,
+            Width = Dim.Fill() - 2,
+            Height = 3
+        };
+
+        var btnEncrypt = new Button("Encrypt")
+        {
+            X = 1,
+            Y = 13,
+            Width = 20
+        };
+
+        var btnBack = new Button("Back")
+        {
+            X = 25,
+            Y = 13,
+            Width = 20
+        };
+
+        btnEncrypt.Clicked += () =>
+        {
+            try
+            {
+                string sourcePath = txtSource.Text.ToString() ?? "";
+                string destinationPath = txtDestination.Text.ToString() ?? "";
+                string password = txtPassword.Text.ToString() ?? "";
+
+                if (string.IsNullOrWhiteSpace(sourcePath) || string.IsNullOrWhiteSpace(destinationPath) || string.IsNullOrWhiteSpace(password))
+                {
+                    lblStatus.Text = "Please fill in all fields";
+                    lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Red, Color.Black) };
+                    return;
+                }
+
+                lblStatus.Text = "Encrypting file...";
+                lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.BrightYellow, Color.Black) };
+                Application.Refresh();
+
+                DxtrEncrypt.DxCrypt.Encrypt(sourcePath, destinationPath, password);
+
+                lblStatus.Text = "File encrypted successfully!";
+                lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Green, Color.Black) };
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = $"Error: {ex.Message}";
+                lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Red, Color.Black) };
+            }
+        };
+
+        btnBack.Clicked += () => ShowEncryptionMenu();
+
+        window.Add(lblSource, txtSource, lblDestination, txtDestination, lblPassword, txtPassword, lblStatus, btnEncrypt, btnBack);
+        Application.Top.Add(window);
+    }
+
+    private static void ShowDecryptFile()
+    {
+        Application.Top.RemoveAll();
+
+        var window = new Window("Decrypt File")
+        {
+            X = 0,
+            Y = 0,
+            Width = Dim.Fill(),
+            Height = Dim.Fill()
+        };
+
+        var lblSource = new Label("Encrypted File Path:")
+        {
+            X = 1,
+            Y = 1,
+            Width = 20
+        };
+
+        var txtSource = new TextField("")
+        {
+            X = 1,
+            Y = 2,
+            Width = Dim.Fill() - 2
+        };
+
+        var lblDestination = new Label("Destination File Path:")
+        {
+            X = 1,
+            Y = 4,
+            Width = 20
+        };
+
+        var txtDestination = new TextField("")
+        {
+            X = 1,
+            Y = 5,
+            Width = Dim.Fill() - 2
+        };
+
+        var lblPassword = new Label("Password:")
+        {
+            X = 1,
+            Y = 7,
+            Width = 20
+        };
+
+        var txtPassword = new TextField("")
+        {
+            X = 1,
+            Y = 8,
+            Width = Dim.Fill() - 2,
+            Secret = true
+        };
+
+        var lblStatus = new Label("")
+        {
+            X = 1,
+            Y = 10,
+            Width = Dim.Fill() - 2,
+            Height = 3
+        };
+
+        var btnDecrypt = new Button("Decrypt")
+        {
+            X = 1,
+            Y = 13,
+            Width = 20
+        };
+
+        var btnBack = new Button("Back")
+        {
+            X = 25,
+            Y = 13,
+            Width = 20
+        };
+
+        btnDecrypt.Clicked += () =>
+        {
+            try
+            {
+                string sourcePath = txtSource.Text.ToString() ?? "";
+                string destinationPath = txtDestination.Text.ToString() ?? "";
+                string password = txtPassword.Text.ToString() ?? "";
+
+                if (string.IsNullOrWhiteSpace(sourcePath) || string.IsNullOrWhiteSpace(destinationPath) || string.IsNullOrWhiteSpace(password))
+                {
+                    lblStatus.Text = "Please fill in all fields";
+                    lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Red, Color.Black) };
+                    return;
+                }
+
+                lblStatus.Text = "Decrypting file...";
+                lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.BrightYellow, Color.Black) };
+                Application.Refresh();
+
+                DxtrEncrypt.DxCrypt.Decrypt(sourcePath, destinationPath, password);
+
+                lblStatus.Text = "File decrypted successfully!";
+                lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Green, Color.Black) };
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = $"Error: {ex.Message}";
+                lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Red, Color.Black) };
+            }
+        };
+
+        btnBack.Clicked += () => ShowEncryptionMenu();
+
+        window.Add(lblSource, txtSource, lblDestination, txtDestination, lblPassword, txtPassword, lblStatus, btnDecrypt, btnBack);
         Application.Top.Add(window);
     }
 
