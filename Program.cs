@@ -1,9 +1,4 @@
 using Terminal.Gui;
-using System.Text;
-using System.Security.Cryptography;
-using Konscious.Security.Cryptography;
-using Scrypt;
-using DxtrEncrypt;
 using DxtrPasswordGen;
 
 class Dexter
@@ -15,138 +10,12 @@ class Dexter
 
     private protected static void Main()
     {
-        Console.OutputEncoding = Encoding.UTF8;
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
         Application.Init();
         Colors.Base = new ColorScheme();
         ShowMainMenu();
         Application.Run();
         Application.Shutdown();
-    }
-
-    private static string GeneratePassword(int length, int strength, List<string> options)
-    {
-        string Lowercase = "abcdefghijklmnopqrstuvwxyz";
-        string symbols = strength >= 2 ? "♠♣♥♦♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼" : "";
-        string multiLang = strength == 3 ? "абвгдеёжзийклмнопрстуфхцчшщъыьэюяαβγδεζηθικλμνξοπρστυφχψωאבגדהוזחטיכסעפצקרשת ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي" : "";
-
-        var uppercaseSelected = options.Where(x => x.Contains("Uppercase Letters"));
-        string uppercase = uppercaseSelected == null ? "" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-        var numbersSelected = options.Where(x => x.Contains("Numbers"));
-        string numbers = numbersSelected == null ? "" : "0123456789๑๒๓๔๕๖๗๘๙๑๐一二三四五六七八九十";
-
-        var specSelected = options.Where(x => x.Contains("Special Characters"));
-        string specChars = specSelected == null ? "" : "!@#$%^&*()_+{}|:<>?-=[];',./";
-
-        var ambigSelected = options.Where(x => x.Contains("Exclude Visually Ambiguous Characters"));
-        string ambiguous = ambigSelected == null ? "" : "il1Lo0O";
-
-        var nodupesSelected = options.Where(x => x.Contains("Exclude duplicate Characters"));
-        bool noDupes = nodupesSelected != null;
-
-        var noSeqSelected = options.Where(x => x.Contains("Exclude Sequential Characters"));
-        bool noSeq = noSeqSelected != null;
-
-        string allChars = Lowercase + uppercase + numbers + specChars + symbols + multiLang;
-
-        if (!string.IsNullOrEmpty(ambiguous))
-        {
-            foreach (char am in ambiguous)
-            {
-                allChars = allChars.Replace(am.ToString(), "");
-            }
-        }
-
-        StringBuilder password = new();
-
-        Random random = new(GetSecureSeed());
-
-        while (password.Length <= length)
-        {
-            char nextChar = allChars[random.Next(allChars.Length)];
-
-            if (noDupes && password.ToString().Contains(nextChar)) continue;
-
-            if (noSeq && password.Length > 0)
-            {
-                char lastChar = password[^1];
-                if (IsSequential(lastChar, nextChar)) continue;
-            }
-
-            password.Append(nextChar);
-        }
-
-        return password.ToString();
-    }
-
-    private static bool IsSequential(char a, char b)
-    {
-        return Math.Abs(a - b) == 1;
-    }
-
-    private static int GetSecureSeed()
-    {
-        using var rng = RandomNumberGenerator.Create();
-        byte[] bytes = new byte[64];
-        rng.GetBytes(bytes);
-        return BitConverter.ToInt32(bytes, 0);
-    }
-
-    private static byte[] GenerateSalt()
-    {
-        byte[] salt = new byte[128];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(salt);
-        }
-
-        return salt;
-    }
-
-    private static string GetHash(string password, string algorithm)
-    {
-        password += GetPepper();
-
-        return algorithm switch
-        {
-            "Argon2id" => GetArgon2Hash(password, GenerateSalt()),
-            "SCrypt" => GetSCryptHash(password, GenerateSalt()),
-            _ => throw new Exception("Invalid algorithm"),
-        };
-    }
-
-    private static string GetArgon2Hash(string password, byte[] salt)
-    {
-        var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
-        {
-            Salt = salt,
-            DegreeOfParallelism = 28,
-            MemorySize = 16200,
-            Iterations = 100000
-        };
-
-        return Convert.ToBase64String(argon2.GetBytes(64));
-    }
-
-    private static string GetSCryptHash(string password, byte[] saltNPepper)
-    {
-        string saltString = Convert.ToBase64String(saltNPepper);
-        string saltedPass = saltString + password;
-
-        ScryptEncoder scryptEncoder = new ScryptEncoder();
-        string hashedPassword = scryptEncoder.Encode(saltedPass);
-
-        return hashedPassword.Replace("-", "");
-    }
-
-    private static string GetPepper()
-    {
-        byte[] pepper = new byte[32];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(pepper);
-        }
-        return Convert.ToBase64String(pepper);
     }
 
     private static void ShowMainMenu()
@@ -322,7 +191,7 @@ class Dexter
                 if (chkExcludeDupes.Checked) options.Add("Exclude duplicate Characters");
                 if (chkExcludeSeq.Checked) options.Add("Exclude Sequential Characters");
 
-                currentPassword = GeneratePassword(length, strength, options);
+                currentPassword = DxPassword.GeneratePassword(length, strength, options);
                 ShowSubMenu(currentPassword);
             }
             catch (Exception ex)
@@ -443,7 +312,7 @@ class Dexter
         {
             try
             {
-                string hash = GetHash(password, selectedAlgorithm);
+                string hash = DxPassword.GetHash(password, selectedAlgorithm);
                 SaveAsync(hash);
             }
             catch (Exception ex)
@@ -509,7 +378,7 @@ class Dexter
         btnSave.Clicked += async () =>
         {
             string? name = txtName.Text.ToString();
-            var result = await DxtrPasswordGen.DxPassword.SavePasswordAsync(name ?? "", hash);
+            var result = await DxPassword.SavePasswordAsync(name ?? "", hash);
             
             lblStatus.Text = result.Message;
             
@@ -538,6 +407,7 @@ class Dexter
     private static string GetHeaderText()
     {
         return @"
+        
              /$$$$$$$                       /$$      
             | $$__  $$                     | $$      
             | $$  \ $$  /$$$$$$  /$$   /$$/$$$$$$    /$$$$$$   /$$$$$$\
@@ -545,7 +415,6 @@ class Dexter
             | $$  | $$| $$$$$$$$  \ $$$$/  | $$    | $$$$$$$$| $$  \__/
             | $$  | $$| $$_____/  >$$  $$  | $$ /$$| $$_____/| $$      
             | $$$$$$$/|  $$$$$$$ /$$/\  $$ |  $$$$/|  $$$$$$$| $$      
-            |_______/  \_______/|__/  \__/  \___ /  \_______/|__/       v1.2
-___________________________________";
+            |_______/  \_______/|__/  \__/  \___ /  \_______/|__/       v1.2";
     }
 }

@@ -4,5 +4,9 @@
     "editor.cursorSmoothCaretAnimation": "on",
     "editor.cursorWidth": 0,
     "editor.fontFamily": "Consolas, 'Courier New', monospace",
-    "editor.formatOnPaste": false
+    "editor.formatOnPaste": false,
+    "cSpell.words": [
+        "Dxtr",
+        "Konscious"
+    ]
 }
