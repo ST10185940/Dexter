@@ -508,49 +508,23 @@ class Dexter
 
         btnSave.Clicked += async () =>
         {
-            try
+            string? name = txtName.Text.ToString();
+            var result = await DxtrPasswordGen.DxPassword.SavePasswordAsync(name ?? "", hash);
+            
+            lblStatus.Text = result.Message;
+            
+            if (result.Success)
             {
-                string? name = txtName.Text.ToString();
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    lblStatus.Text = "Please enter a password name";
-                    lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Red, Color.Black) };
-                    return;
-                }
-
-                DxtrPasswordGen.Password saved = new(name, hash);
-
-                var path = "Dexter/yourPasswords.csv";
-                Directory.CreateDirectory(Path.GetDirectoryName(path) ?? "Dexter");
-
-                string content = File.Exists(path) ? File.ReadAllText(path) : "";
-
-                if (content.Contains(name))
-                {
-                    lblStatus.Text = "Password has already been saved";
-                    lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.BrightYellow, Color.Black) };
-                }
-                else
-                {
-                    using (var writer = new StreamWriter(path, append: true))
-                    {
-                        if (!File.Exists(path) || new FileInfo(path).Length == 0)
-                        {
-                            await writer.WriteLineAsync("Password_Name , Hash");
-                            await writer.WriteLineAsync(" ");
-                        }
-                        await writer.WriteLineAsync($"{saved}");
-                    }
-                    lblStatus.Text = "Password saved successfully!";
-                    lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Green, Color.Black) };
-                    
-                    await Task.Delay(1500);
-                    ShowMainMenu();
-                }
+                lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Green, Color.Black) };
+                await Task.Delay(1500);
+                ShowMainMenu();
             }
-            catch (Exception ex)
+            else if (result.IsDuplicate)
             {
-                lblStatus.Text = $"Error: {ex.Message}";
+                lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.BrightYellow, Color.Black) };
+            }
+            else
+            {
                 lblStatus.ColorScheme = new ColorScheme { Normal = new Terminal.Gui.Attribute(Color.Red, Color.Black) };
             }
         };

@@ -142,6 +142,60 @@ namespace DxtrPasswordGen
             }
             return Convert.ToBase64String(pepper);
         }
+
+        public static async Task<SaveResult> SavePasswordAsync(string name, string hash)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    return new SaveResult { Success = false, Message = "Please enter a password name" };
+                }
+
+                Password saved = new(name, hash);
+
+                // Use absolute path to ensure consistent file location
+                string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Dexter Vault");
+                Directory.CreateDirectory(directory);
+                string path = Path.Combine(directory, "yourPasswords.csv");
+
+                // Check if password name already exists
+                bool fileExists = File.Exists(path);
+                string content = fileExists ? await File.ReadAllTextAsync(path) : "";
+
+                if (content.Contains(name))
+                {
+                    return new SaveResult { Success = false, Message = "Password has already been saved", IsDuplicate = true };
+                }
+
+                // Append to file, creating header if file is new or empty
+                bool needsHeader = !fileExists || new FileInfo(path).Length == 0;
+                
+                using (var writer = new StreamWriter(path, append: true))
+                {
+                    if (needsHeader)
+                    {
+                        await writer.WriteLineAsync("Password_Name , Hash");
+                        await writer.WriteLineAsync(" ");
+                    }
+                    await writer.WriteLineAsync($"{saved}");
+                    await writer.FlushAsync();
+                }
+                
+                return new SaveResult { Success = true, Message = "Password saved successfully!" };
+            }
+            catch (Exception ex)
+            {
+                return new SaveResult { Success = false, Message = $"Error: {ex.Message}" };
+            }
+        }
+    }
+
+    public class SaveResult
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public bool IsDuplicate { get; set; }
     }
 }
 
